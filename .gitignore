@@ -1,0 +1,8 @@
+/target
+**/target/
+**/*.rs.bk
+*.pdb
+*.polkavm
+.DS_Store
+.idea/
+.vscode/

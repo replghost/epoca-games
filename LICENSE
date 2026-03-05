@@ -1,0 +1,5 @@
+Each subdirectory in this repository carries its own license
+matching the upstream project it was ported from.
+
+doom/ — GNU General Public License v2.0 (GPL-2.0)
+         See https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
