@@ -36,16 +36,6 @@ struct _FILE {
 
 static struct _FILE file_table[MAX_OPEN_FILES];
 
-/* Extract just the filename from a path (strip directories). */
-static const char *base_name(const char *path) {
-    const char *slash;
-    if (!path) return "";
-    slash = strrchr(path, '/');
-    if (slash) return slash + 1;
-    slash = strrchr(path, '\\');
-    if (slash) return slash + 1;
-    return path;
-}
 
 /* Check if we already have this asset loaded (closed but data still valid). */
 static struct _FILE *find_cached(const char *name) {
@@ -64,8 +54,8 @@ FILE *fopen(const char *path, const char *mode) {
     /* Reject NULL or empty paths immediately. */
     if (!path || path[0] == '\0') return NULL;
 
-    /* Find the asset name — try basename. */
-    const char *name = base_name(path);
+    /* Asset names are package-relative paths (for example assets/doom1.wad). */
+    const char *name = path;
     size_t name_len = strlen(name);
     if (name_len == 0) return NULL;
 

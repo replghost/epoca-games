@@ -12,18 +12,19 @@ Each game is a sandboxed guest program that renders via the framebuffer API — 
 
 ## Building
 
-DOOM example:
+The DOOM product requires Rust `nightly-2025-05-10` with `rust-src`,
+`polkatool` 0.31, Python 3, and a Clang/LLVM toolchain with the RISC-V target.
+On macOS, `package.sh` uses Homebrew LLVM automatically; elsewhere set
+`PVM_CLANG` if the RISC-V-capable Clang is not on `PATH`. A lawfully obtained
+DOOM IWAD is also required. Game data is not distributed with this
+repository. From the repository root, supply the IWAD explicitly:
 
 ```bash
-cd doom
-cargo +nightly build -Z build-std=core,alloc \
-  --target $(polkatool get-target-json-path --bitness 32) \
-  --release
-polkatool link target/riscv32-polkavm-fixed/release/doom-guest -o bundle/app.polkavm
-cd bundle && zip -r ../doom.prod manifest.toml app.polkavm assets/
+DOOM_IWAD=/absolute/path/to/doom1.wad ./doom/package.sh
 ```
 
-Requires `doom1.wad` (shareware) in `bundle/assets/`.
+This builds and links `app.polkavm`, then creates `doom/doom.prod` containing
+`pvm.json`, `app.polkavm`, and the supplied IWAD as `assets/doom1.wad`.
 
 ## Architecture
 
@@ -32,9 +33,12 @@ Each game port follows the same pattern:
 1. Rust `no_std` shim (`src/main.rs`) — exports `init()` and `update()` via `polkavm_derive`
 2. C/Rust game code linked in via `build.rs`
 3. Host functions: `host_present_frame`, `host_poll_input`, `host_time_ms`, `host_asset_read`, `host_log`
-4. Packaged as a `.prod` bundle (ZIP with `manifest.toml` + `app.polkavm` + `assets/`)
+4. Packaged as a `.prod` ZIP bundle with a verified `pvm.json` descriptor, `app.polkavm`, and assets
 
 ## License
 
-Each game directory carries its own license matching the upstream source.
-See individual directories for details.
+The DOOM port source is derived from
+[doomgeneric](https://github.com/ozkl/doomgeneric) and remains licensed under
+GPL-2.0; see `doom/LICENSE`. IWAD game data is separate from the GPL-licensed
+port source, is not distributed here, and must be supplied by the user from a
+lawful source.

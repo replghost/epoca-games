@@ -1,0 +1,7 @@
+{
+  "$v": 1,
+  "kind": "polkavm",
+  "abi": 1,
+  "entry": "app.polkavm",
+  "display": "framebuffer"
+}
