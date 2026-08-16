@@ -28,6 +28,14 @@ extern void host_log_wrapper(uint32_t ptr, uint32_t len);
 static const char INPUT_LOG[] = "doom-input";
 
 static unsigned char translate_key(uint8_t usage) {
+    /* Modern FPS controls. Arrow keys remain available for turning and menus. */
+    switch (usage) {
+        case 0x04: return KEY_STRAFE_L;  /* A */
+        case 0x07: return KEY_STRAFE_R;  /* D */
+        case 0x16: return KEY_DOWNARROW; /* S */
+        case 0x1a: return KEY_UPARROW;   /* W */
+    }
+
     if (usage >= 0x04 && usage <= 0x1d) {
         return (unsigned char)('a' + usage - 0x04);
     }
@@ -271,7 +279,9 @@ int DG_GetMouse(int *buttons, int *xrel, int *yrel) {
 
     *buttons = mouse_ring[mouse_head].buttons;
     *xrel = mouse_ring[mouse_head].xrel;
-    *yrel = mouse_ring[mouse_head].yrel;
+    /* Classic Doom treats vertical mouse motion as forward/back movement.
+     * Suppress it so pointer movement cannot leave the player walking. */
+    *yrel = 0;
     mouse_head = (mouse_head + 1) % MAX_INPUT_EVENTS;
     --mouse_count;
     return 1;
