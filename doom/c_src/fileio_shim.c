@@ -4,8 +4,8 @@
  * Provides fopen/fclose/fread/fwrite/fseek/ftell/feof and the w_file WAD
  * interface. All file access goes through the host's asset store.
  *
- * Strategy: on fopen, load the entire asset into a malloc'd buffer.
- * Then fread/fseek/ftell operate on that buffer.
+ * Files remain in host-owned storage. fread/fseek/ftell issue bounded
+ * offset reads instead of copying an entire WAD into guest memory.
  */
 
 #include <stddef.h>
@@ -19,15 +19,14 @@ extern uint32_t host_asset_read_wrapper(uint32_t name_ptr, uint32_t name_len,
 
 /* libc shim functions we provide */
 extern void *malloc(size_t);
-extern void free(void *);
 
 /* ── Concrete definition of FILE (declared as struct _FILE in stdio.h) ── */
 
 #define MAX_OPEN_FILES 16
+#define MAX_FILE_SIZE (32 * 1024 * 1024)
 
 struct _FILE {
     int in_use;
-    unsigned char *data;
     size_t size;
     size_t pos;
     int eof_flag;
@@ -36,11 +35,11 @@ struct _FILE {
 
 static struct _FILE file_table[MAX_OPEN_FILES];
 
-
-/* Check if we already have this asset loaded (closed but data still valid). */
+/* Reuse a known size for assets opened more than once. */
 static struct _FILE *find_cached(const char *name) {
     for (int i = 0; i < MAX_OPEN_FILES; i++) {
-        if (!file_table[i].in_use && file_table[i].data != NULL
+        if (!file_table[i].in_use
+            && file_table[i].asset_name[0] != '\0'
             && strcmp(file_table[i].asset_name, name) == 0) {
             return &file_table[i];
         }
@@ -59,7 +58,7 @@ FILE *fopen(const char *path, const char *mode) {
     size_t name_len = strlen(name);
     if (name_len == 0) return NULL;
 
-    /* Reuse cached data from a previous open/close of the same asset. */
+    /* Reuse metadata from a previous open/close of the same asset. */
     struct _FILE *cached = find_cached(name);
     if (cached) {
         cached->in_use = 1;
@@ -69,8 +68,6 @@ FILE *fopen(const char *path, const char *mode) {
         return cached;
     }
 
-    #define PROBE_CHUNK (64 * 1024)
-    #define MAX_FILE_SIZE (32 * 1024 * 1024)
 
     /* Check if asset exists. */
     uint8_t probe;
@@ -92,66 +89,65 @@ FILE *fopen(const char *path, const char *mode) {
     }
     size_t file_size = lo;
 
-    /* Allocate and read the entire file. */
-    unsigned char *data = (unsigned char *)malloc(file_size);
-    if (!data) {
-        printf("fopen: malloc failed for %u bytes\n", (unsigned)file_size);
+    /* Keep asset bytes host-owned. Large IWADs otherwise consume nearly all
+     * of the PolkaVM guest's 32 MiB data address space before Doom starts. */
+    struct _FILE *slot = NULL;
+    for (int i = 0; i < MAX_OPEN_FILES; i++) {
+        if (!file_table[i].in_use) {
+            if (slot == NULL) {
+                slot = &file_table[i];
+            }
+            if (file_table[i].asset_name[0] == '\0') {
+                slot = &file_table[i];
+                break;
+            }
+        }
+    }
+    if (slot == NULL) {
+        printf("fopen: too many open files\n");
         return NULL;
     }
 
-    size_t offset = 0;
-    while (offset < file_size) {
-        size_t chunk = file_size - offset;
-        if (chunk > PROBE_CHUNK) chunk = PROBE_CHUNK;
-        got = host_asset_read_wrapper((uint32_t)(uintptr_t)name, name_len,
-                              (uint32_t)offset,
-                              (uint32_t)(uintptr_t)(data + offset),
-                              (uint32_t)chunk);
-        if (got == 0) break;
-        offset += got;
-    }
-
-    /* Find a free file slot. */
-    for (int i = 0; i < MAX_OPEN_FILES; i++) {
-        if (!file_table[i].in_use && file_table[i].data == NULL) {
-            file_table[i].in_use = 1;
-            file_table[i].data = data;
-            file_table[i].size = offset;
-            file_table[i].pos = 0;
-            file_table[i].eof_flag = 0;
-            /* Cache the asset name for reuse after fclose. */
-            strncpy(file_table[i].asset_name, name, sizeof(file_table[i].asset_name) - 1);
-            file_table[i].asset_name[sizeof(file_table[i].asset_name) - 1] = '\0';
-            printf("fopen: %s (%u bytes)\n", name, (unsigned)offset);
-            return &file_table[i];
-        }
-    }
-
-    free(data);
-    printf("fopen: too many open files\n");
-    return NULL;
+    slot->in_use = 1;
+    slot->size = file_size;
+    slot->pos = 0;
+    slot->eof_flag = 0;
+    strncpy(slot->asset_name, name, sizeof(slot->asset_name) - 1);
+    slot->asset_name[sizeof(slot->asset_name) - 1] = '\0';
+    printf("fopen: %s (%u bytes)\n", name, (unsigned)file_size);
+    return slot;
 }
 
 int fclose(FILE *f) {
     if (!f || !f->in_use) return -1;
     f->in_use = 0;
-    /* Keep f->data and f->asset_name for cache reuse on next fopen. */
     f->pos = 0;
     f->eof_flag = 0;
     return 0;
 }
 
 size_t fread(void *ptr, size_t elem_size, size_t count, FILE *f) {
-    if (!f || !f->in_use) return 0;
+    if (!f || !f->in_use || elem_size == 0 || count == 0) return 0;
+    if (count > SIZE_MAX / elem_size) return 0;
+
     size_t total = elem_size * count;
     size_t avail = (f->pos < f->size) ? f->size - f->pos : 0;
     if (total > avail) {
         total = avail;
         f->eof_flag = 1;
     }
-    memcpy(ptr, f->data + f->pos, total);
-    f->pos += total;
-    return total / elem_size;
+    uint32_t got = host_asset_read_wrapper(
+        (uint32_t)(uintptr_t)f->asset_name,
+        (uint32_t)strlen(f->asset_name),
+        (uint32_t)f->pos,
+        (uint32_t)(uintptr_t)ptr,
+        (uint32_t)total
+    );
+    f->pos += got;
+    if ((size_t)got < total) {
+        f->eof_flag = 1;
+    }
+    return got / elem_size;
 }
 
 size_t fwrite(const void *ptr, size_t size, size_t count, FILE *f) {
@@ -188,8 +184,9 @@ int feof(FILE *f) {
 char *fgets(char *buf, int n, FILE *f) {
     if (!f || !f->in_use || n <= 0) return NULL;
     int i = 0;
-    while (i < n - 1 && f->pos < f->size) {
-        char c = (char)f->data[f->pos++];
+    while (i < n - 1) {
+        char c;
+        if (fread(&c, 1, 1, f) != 1) break;
         buf[i++] = c;
         if (c == '\n') break;
     }
