@@ -91,10 +91,10 @@ extern "C" {
 
 // ── Exported entry points for PolkaVM ──────────────────────────────
 
-/// Fake argv for doomgeneric: ["doom", "-iwad", "assets/doom1.wad"]
+/// Fake argv for doomgeneric: ["doom", "-iwad", "game/doom.wad"]
 static ARG0: &[u8] = b"doom\0";
 static ARG1: &[u8] = b"-iwad\0";
-static ARG2: &[u8] = b"assets/doom1.wad\0";
+static ARG2: &[u8] = b"game/doom.wad\0";
 
 /// IMPORTANT: argv must be static so DOOM's global `myargv` doesn't become
 /// a dangling pointer after init() returns.

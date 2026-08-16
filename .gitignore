@@ -8,3 +8,5 @@
 .vscode/
 doom1.wad
 *.prod
+/freedoom/bundle/
+/freedoom/*.zip

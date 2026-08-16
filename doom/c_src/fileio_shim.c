@@ -54,7 +54,7 @@ FILE *fopen(const char *path, const char *mode) {
     /* Reject NULL or empty paths immediately. */
     if (!path || path[0] == '\0') return NULL;
 
-    /* Asset names are package-relative paths (for example assets/doom1.wad). */
+    /* Asset names are host-mounted paths (for example game/doom.wad). */
     const char *name = path;
     size_t name_len = strlen(name);
     if (name_len == 0) return NULL;

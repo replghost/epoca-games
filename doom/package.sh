@@ -23,8 +23,9 @@ PVM_LLVM_RANLIB="${PVM_LLVM_RANLIB:-$LLVM_BIN/llvm-ranlib}"
   fail "llvm-ar and llvm-ranlib are required beside PVM_CLANG"
 export PVM_LLVM_AR PVM_LLVM_RANLIB
 
-[[ -n "${DOOM_IWAD:-}" ]] || fail "DOOM_IWAD must name a lawfully obtained DOOM IWAD"
-[[ -f "$DOOM_IWAD" && -r "$DOOM_IWAD" ]] || fail "DOOM_IWAD is not a readable file: $DOOM_IWAD"
+if [[ -n "${DOOM_IWAD:-}" && (! -f "$DOOM_IWAD" || ! -r "$DOOM_IWAD") ]]; then
+  fail "DOOM_IWAD is not a readable file: $DOOM_IWAD"
+fi
 
 DOOM_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUNDLE_DIR="$DOOM_DIR/bundle"
@@ -51,18 +52,19 @@ if ! polkatool link "$GUEST_ELF" -o "$BUNDLE_DIR/app.polkavm"; then
   fail "polkatool failed to link app.polkavm"
 fi
 
-python3 - "$BUNDLE_DIR/pvm.json" "$BUNDLE_DIR/app.polkavm" "$DOOM_IWAD" "$DOOM_DIR/doom.prod" <<'PY'
+python3 - "$BUNDLE_DIR/manifest.json" "$BUNDLE_DIR/app.polkavm" "$DOOM_DIR/doom.prod" "${DOOM_IWAD:-}" <<'PY'
 import os
 import sys
 import tempfile
 import zipfile
 
-sources = (
-    (sys.argv[1], "pvm.json", 0o644),
+sources = [
+    (sys.argv[1], "manifest.json", 0o644),
     (sys.argv[2], "app.polkavm", 0o644),
-    (sys.argv[3], "assets/doom1.wad", 0o644),
-)
-output = sys.argv[4]
+]
+output = sys.argv[3]
+if sys.argv[4]:
+    sources.append((sys.argv[4], "game/doom.wad", 0o444))
 fd, temporary = tempfile.mkstemp(prefix=".doom.prod.", dir=os.path.dirname(output))
 os.close(fd)
 try:
