@@ -33,6 +33,7 @@ static unsigned char translate_key(uint8_t usage) {
         case 0x04: return KEY_STRAFE_L;  /* A */
         case 0x07: return KEY_STRAFE_R;  /* D */
         case 0x16: return KEY_DOWNARROW; /* S */
+        case 0x08: return KEY_USE;       /* E */
         case 0x1a: return KEY_UPARROW;   /* W */
     }
 
@@ -49,7 +50,7 @@ static unsigned char translate_key(uint8_t usage) {
         case 0x29: return KEY_ESCAPE;
         case 0x2a: return KEY_BACKSPACE;
         case 0x2b: return KEY_TAB;
-        case 0x2c: return KEY_USE;
+        case 0x2c: return KEY_FIRE;      /* Space; Doom has no jump action. */
         case 0x2d: return KEY_MINUS;
         case 0x2e: return KEY_EQUALS;
         case 0x2f: return '[';

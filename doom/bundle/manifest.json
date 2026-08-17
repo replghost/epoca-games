@@ -2,14 +2,21 @@
   "$schema": "epoca:experimental-product/v1",
   "$v": 1,
   "kind": "framebuffer",
-  "appVersion": [0, 1, 0],
+  "appVersion": [0, 1, 1],
   "runtime": {
     "kind": "polkavm",
     "entrypoint": "app.polkavm"
   },
   "modalities": {
     "framebuffer": {
-      "abiVersion": 1
+      "abiVersion": 1,
+      "controls": [
+        "WASD Move",
+        "Arrows Turn",
+        "Space / Mouse 1 Fire",
+        "E Use",
+        "Esc Menu"
+      ]
     },
     "generalInput": {
       "handlers": [
