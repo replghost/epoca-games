@@ -1,0 +1,18 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "content",
+  "contentVersion": [0, 13, 0],
+  "items": [
+    {
+      "id": "phase-1",
+      "type": "application/x-doom-wad",
+      "traits": ["game", "doom-iwad"],
+      "entry": "freedoom1.wad",
+      "license": "BSD-3-Clause",
+      "integrity": {
+        "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d"
+      }
+    }
+  ]
+}

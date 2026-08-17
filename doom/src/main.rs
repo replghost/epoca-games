@@ -24,8 +24,16 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
 extern "C" {
     fn host_present_frame(ptr: u32, width: u32, height: u32, stride: u32) -> u32;
     fn host_poll_input(buf_ptr: u32, buf_len: u32) -> u32;
+    fn host_audio_submit(ptr: u32, sample_count: u32) -> u32;
     fn host_time_ms() -> u64;
-    fn host_asset_read(name_ptr: u32, name_len: u32, offset: u32, dst_ptr: u32, max_len: u32) -> u32;
+    fn host_sleep_ms(duration_ms: u32);
+    fn host_asset_read(
+        name_ptr: u32,
+        name_len: u32,
+        offset: u32,
+        dst_ptr: u32,
+        max_len: u32,
+    ) -> u32;
     fn host_log(ptr: u32, len: u32);
 }
 
@@ -39,7 +47,12 @@ pub unsafe extern "C" fn host_log_wrapper(ptr: u32, len: u32) {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn host_present_frame_wrapper(ptr: u32, width: u32, height: u32, stride: u32) -> u32 {
+pub unsafe extern "C" fn host_present_frame_wrapper(
+    ptr: u32,
+    width: u32,
+    height: u32,
+    stride: u32,
+) -> u32 {
     host_present_frame(ptr, width, height, stride)
 }
 
@@ -49,12 +62,28 @@ pub unsafe extern "C" fn host_poll_input_wrapper(buf_ptr: u32, buf_len: u32) -> 
 }
 
 #[no_mangle]
+pub unsafe extern "C" fn host_audio_submit_wrapper(ptr: u32, sample_count: u32) -> u32 {
+    host_audio_submit(ptr, sample_count)
+}
+
+#[no_mangle]
 pub unsafe extern "C" fn host_time_ms_wrapper() -> u64 {
     host_time_ms()
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn host_asset_read_wrapper(name_ptr: u32, name_len: u32, offset: u32, dst_ptr: u32, max_len: u32) -> u32 {
+pub unsafe extern "C" fn host_sleep_ms_wrapper(duration_ms: u32) {
+    host_sleep_ms(duration_ms);
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn host_asset_read_wrapper(
+    name_ptr: u32,
+    name_len: u32,
+    offset: u32,
+    dst_ptr: u32,
+    max_len: u32,
+) -> u32 {
     host_asset_read(name_ptr, name_len, offset, dst_ptr, max_len)
 }
 
@@ -63,14 +92,15 @@ pub unsafe extern "C" fn host_asset_read_wrapper(name_ptr: u32, name_len: u32, o
 extern "C" {
     fn doomgeneric_Create(argc: i32, argv: *const *const u8);
     fn doomgeneric_Tick();
+    fn doom_audio_pump();
 }
 
 // ── Exported entry points for PolkaVM ──────────────────────────────
 
-/// Fake argv for doomgeneric: ["doom", "-iwad", "doom1.wad"]
+/// Fake argv for doomgeneric: ["doom", "-iwad", "game/doom.wad"]
 static ARG0: &[u8] = b"doom\0";
 static ARG1: &[u8] = b"-iwad\0";
-static ARG2: &[u8] = b"doom1.wad\0";
+static ARG2: &[u8] = b"game/doom.wad\0";
 
 /// IMPORTANT: argv must be static so DOOM's global `myargv` doesn't become
 /// a dangling pointer after init() returns.
@@ -91,5 +121,6 @@ extern "C" fn init() {
 extern "C" fn update() {
     unsafe {
         doomgeneric_Tick();
+        doom_audio_pump();
     }
 }

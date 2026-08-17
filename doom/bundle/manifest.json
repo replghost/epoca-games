@@ -1,0 +1,47 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "framebuffer",
+  "appVersion": [0, 1, 2],
+  "runtime": {
+    "kind": "polkavm",
+    "entrypoint": "app.polkavm"
+  },
+  "modalities": {
+    "framebuffer": {
+      "abiVersion": 1,
+      "controls": [
+        "WASD Move",
+        "Arrows Turn",
+        "Space / Mouse 1 Fire",
+        "E Use",
+        "Esc Menu"
+      ]
+    },
+    "generalInput": {
+      "handlers": [
+        {
+          "kind": "content",
+          "types": ["application/x-doom-wad"],
+          "traits": ["doom-iwad"],
+          "actions": ["open"]
+        }
+      ]
+    }
+  },
+  "contentSlots": [
+    {
+      "id": "iwad",
+      "required": true,
+      "accepts": ["application/x-doom-wad"],
+      "traits": ["doom-iwad"],
+      "delivery": "read-only-mount",
+      "mount": "game/doom.wad",
+      "default": {
+        "product": "freedoom.dot",
+        "item": "phase-1",
+        "version": [0, 13, 0]
+      }
+    }
+  ]
+}

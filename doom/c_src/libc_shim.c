@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdarg.h>
+struct _FILE;
 
 /* ── Host function imports (linked via Rust #[no_mangle] wrappers) ── */
 extern void host_log_wrapper(const char *ptr, unsigned int len);
@@ -673,7 +674,6 @@ int *__errno_location(void) { return &errno; }
 
 /* ── Standard stream handles (FILE* as declared in stdio.h) ── */
 /* These are never used for actual I/O — doom just passes them to fprintf. */
-struct _FILE;
 struct _FILE *stderr = 0;
 struct _FILE *stdout = 0;
 struct _FILE *stdin = 0;

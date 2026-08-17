@@ -15,7 +15,7 @@ fn main() {
             !matches!(
                 name,
                 "w_file_stdc.c"  // replaced by our fileio shim
-                | "i_sound.c"    // replaced by our no-op sound
+                | "i_sound.c"    // replaced by our PolkaVM sound mixer
                 | "i_cdmus.c"    // CD music — not needed
                 | "libc_shim.c"  // compiled separately below
                 | "doomgeneric_polkavm.c"
@@ -25,22 +25,20 @@ fn main() {
         })
         .collect();
 
-    // Use env vars to force cc to use clang with our exact target triple.
-    // The cc crate replaces hyphens with underscores when looking up env vars.
-    std::env::set_var("CC_riscv32_polkavm_fixed", "clang");
-    std::env::set_var(
-        "CFLAGS_riscv32_polkavm_fixed",
-        "--target=riscv32-unknown-elf -march=rv32emc -mabi=ilp32e",
-    );
-
     let mut build = cc::Build::new();
     build
+        .target("riscv32-unknown-elf")
+        .compiler(std::env::var("PVM_CLANG").unwrap_or_else(|_| "clang".to_owned()))
+        .archiver(std::env::var("PVM_LLVM_AR").unwrap_or_else(|_| "llvm-ar".to_owned()))
+        .ranlib(std::env::var("PVM_LLVM_RANLIB").unwrap_or_else(|_| "llvm-ranlib".to_owned()))
+        .flag("-march=rv32emc")
+        .flag("-mabi=ilp32e")
         .files(&sources)
         // Our shim files
         .file("c_src/libc_shim.c")
         .file("c_src/doomgeneric_polkavm.c")
         .file("c_src/fileio_shim.c")
-        .file("c_src/i_sound_stub.c")
+        .file("c_src/i_sound_polkavm.c")
         .include(&c_src)
         // Our freestanding libc shim headers (used with -nostdinc)
         .include("c_src/include")
