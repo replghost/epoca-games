@@ -2,7 +2,7 @@
   "$schema": "epoca:experimental-product/v1",
   "$v": 1,
   "kind": "framebuffer",
-  "appVersion": [0, 1, 1],
+  "appVersion": [0, 1, 2],
   "runtime": {
     "kind": "polkavm",
     "entrypoint": "app.polkavm"

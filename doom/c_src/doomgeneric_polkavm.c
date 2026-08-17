@@ -14,6 +14,7 @@
 extern uint32_t host_present_frame_wrapper(uint32_t ptr, uint32_t width, uint32_t height, uint32_t stride);
 extern uint32_t host_poll_input_wrapper(uint32_t buf_ptr, uint32_t buf_len);
 extern uint64_t host_time_ms_wrapper(void);
+extern void host_sleep_ms_wrapper(uint32_t duration_ms);
 extern void host_log_wrapper(uint32_t ptr, uint32_t len);
 
 /* ── ABI v1 input decoding ──────────────────────────────────────── */
@@ -246,9 +247,7 @@ void DG_DrawFrame(void) {
 }
 
 void DG_SleepMs(uint32_t ms) {
-    /* PolkaVM is single-threaded — we can't really sleep.
-     * Just return immediately; the host controls frame pacing. */
-    (void)ms;
+    host_sleep_ms_wrapper(ms);
 }
 
 uint32_t DG_GetTicksMs(void) {

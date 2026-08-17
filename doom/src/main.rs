@@ -26,6 +26,7 @@ extern "C" {
     fn host_poll_input(buf_ptr: u32, buf_len: u32) -> u32;
     fn host_audio_submit(ptr: u32, sample_count: u32) -> u32;
     fn host_time_ms() -> u64;
+    fn host_sleep_ms(duration_ms: u32);
     fn host_asset_read(
         name_ptr: u32,
         name_len: u32,
@@ -68,6 +69,11 @@ pub unsafe extern "C" fn host_audio_submit_wrapper(ptr: u32, sample_count: u32) 
 #[no_mangle]
 pub unsafe extern "C" fn host_time_ms_wrapper() -> u64 {
     host_time_ms()
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn host_sleep_ms_wrapper(duration_ms: u32) {
+    host_sleep_ms(duration_ms);
 }
 
 #[no_mangle]
