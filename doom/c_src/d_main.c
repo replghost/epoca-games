@@ -195,14 +195,21 @@ void D_Display (void)
 		borderdrawcount = 3;
     }
 
+    // The PolkaVM host owns frame pacing. Doom's transition wipe renders and
+    // sleeps through the entire animation in one call, so present the new
+    // state directly instead of blocking a host update.
+#ifdef EPOCA_PVM
+    wipe = false;
+#else
     // save the current screen if about to wipe
     if (gamestate != wipegamestate)
-		{
-		wipe = true;
-		wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+    {
+        wipe = true;
+        wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
     else
-    	wipe = false;
+        wipe = false;
+#endif
 
     if (gamestate == GS_LEVEL && gametic)
     	HU_Erase();

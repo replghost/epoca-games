@@ -49,6 +49,9 @@ fn main() {
         .define("MODE_32BPP", None)
         // Disable features that need OS support
         .define("NO_SIGNAL_HANDLING", None)
+        // A host update must render at most one frame. Doom's synchronous
+        // transition wipe otherwise blocks inside one PolkaVM update.
+        .define("EPOCA_PVM", None)
         // Suppress warnings for old C code
         .warnings(false)
         .flag("-fno-builtin")
