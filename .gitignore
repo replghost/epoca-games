@@ -9,6 +9,8 @@
 doom1.wad
 *.prod
 /freedoom/bundle/
+/libresector/bundle/
 /freedoom/*.zip
 .env
 .env.*
+/.tmp/

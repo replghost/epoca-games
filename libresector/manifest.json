@@ -1,0 +1,18 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "content",
+  "contentVersion": [0, 1, 0],
+  "items": [
+    {
+      "id": "demo-map",
+      "type": "application/x-duke3d-grp",
+      "traits": ["game", "duke3d-grp"],
+      "entry": "duke3d.grp",
+      "license": "CC0-1.0",
+      "integrity": {
+        "sha256": "c268b772c031170ac0889e2775b57874b0fdcd139fbde8708737c6012a753dd7"
+      }
+    }
+  ]
+}

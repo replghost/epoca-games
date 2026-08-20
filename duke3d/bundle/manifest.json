@@ -1,0 +1,47 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "framebuffer",
+  "appVersion": [0, 1, 0],
+  "runtime": {
+    "kind": "polkavm",
+    "entrypoint": "app.polkavm"
+  },
+  "modalities": {
+    "framebuffer": {
+      "abiVersion": 1,
+      "controls": [
+        "WASD Move",
+        "Mouse / Arrows Look",
+        "Mouse 1 / Ctrl Fire",
+        "E / Space Use",
+        "Esc Menu"
+      ]
+    },
+    "generalInput": {
+      "handlers": [
+        {
+          "kind": "content",
+          "types": ["application/x-duke3d-grp"],
+          "traits": ["duke3d-grp"],
+          "actions": ["open"]
+        }
+      ]
+    }
+  },
+  "contentSlots": [
+    {
+      "id": "grp",
+      "required": true,
+      "accepts": ["application/x-duke3d-grp"],
+      "traits": ["duke3d-grp"],
+      "delivery": "read-only-mount",
+      "mount": "game/duke3d.grp",
+      "default": {
+        "product": "libresector",
+        "item": "demo-map",
+        "version": [0, 1, 0]
+      }
+    }
+  ]
+}
