@@ -2087,13 +2087,11 @@ void getinput(short snum)
     if ( ACTION( gamefunc_Strafe_Left ) )
         {
         svel += keymove;
-        angvel = (info.dyaw+previousInfoDyaw)/64;
         }
 
     if ( ACTION( gamefunc_Strafe_Right ) )
         {
         svel += -keymove;
-        angvel = (info.dyaw+previousInfoDyaw)/64;
         }
 
     if ( ACTION(gamefunc_Move_Forward) )

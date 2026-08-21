@@ -514,15 +514,13 @@ void CONTROL_GetInput( ControlInfo *info )
 			break;
 
 		case controltype_joystickandmouse:
-			// Not sure what I was thinking here...
-			// Commented this out because it totally breaks smooth mouse etc...
-			/*
-			{
-				// Mouse should use pitch instead of forward movement.
-				info->dpitch = my * sens*2;
-			}
+#ifdef OPENFPGA
+			/* The Epoca host reports the physical mouse alongside the
+			 * virtual controller. Preserve vertical deltas as pitch rather
+			 * than dropping them in the combined controller mode. */
+			info->dpitch = my * sens_Y * 2;
+#endif
 			break;
-			*/
 
 		default:
 			{
