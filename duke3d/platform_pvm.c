@@ -178,34 +178,6 @@ int SDL_SetRelativeMouseMode(int enabled) { (void)enabled; return 0; }
 int of_has_feature(uint32_t feature) { (void)feature; return 0; }
 
 
-void d3d_audio_init(void) {}
-void d3d_sound_set_fx_volume(int volume) { (void)volume; }
-int d3d_sound_precache(int sound_num) { (void)sound_num; return 0; }
-int d3d_sound_precache_all(void) { return 0; }
-int d3d_sound_play(int sound_num, int priority, int volume) {
-    (void)sound_num; (void)priority; (void)volume; return -1;
-}
-int d3d_sound_play_3d(int sound_num, int priority, int angle, int distance) {
-    (void)sound_num; (void)priority; (void)angle; (void)distance; return -1;
-}
-int d3d_sound_play_pitch(int sound_num, int priority, int volume, int pitch) {
-    (void)sound_num; (void)priority; (void)volume; (void)pitch; return -1;
-}
-int d3d_sound_play_3d_pitch(int sound_num, int priority, int angle, int distance, int pitch) {
-    (void)sound_num; (void)priority; (void)angle; (void)distance; (void)pitch; return -1;
-}
-void d3d_sound_stop(int handle) { (void)handle; }
-void d3d_sound_stop_all(void) {}
-void d3d_sound_set_volume(int handle, int volume) { (void)handle; (void)volume; }
-void d3d_sound_set_pan(int handle, int angle, int distance) {
-    (void)handle; (void)angle; (void)distance;
-}
-void d3d_sound_set_loop(int handle) { (void)handle; }
-void d3d_sound_set_owned(int handle) { (void)handle; }
-void d3d_audio_pump(void) {}
-void d3d_audio_pump_loading(void) { pvm_yield_wrapper(); }
-void d3d_audio_shutdown(void) {}
-
 DIR *opendir(const char *path) { (void)path; return 0; }
 struct dirent *readdir(DIR *directory) { (void)directory; return 0; }
 

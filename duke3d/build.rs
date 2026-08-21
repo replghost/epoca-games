@@ -37,6 +37,7 @@ fn main() {
         "Game/src/cvars.c",
         "Game/src/midi/midi_of.c",
         "d3d_gpu_stub.c",
+        "d3d_audio_pvm.c",
         "d3d_save.c",
         "posix_shim.c",
         "libc_shim.c",
@@ -85,6 +86,7 @@ fn main() {
     println!("cargo:rerun-if-changed=Game/");
     println!("cargo:rerun-if-changed=platform_pvm.c");
     println!("cargo:rerun-if-changed=d3d_gpu_stub.c");
+    println!("cargo:rerun-if-changed=d3d_audio_pvm.c");
     println!("cargo:rerun-if-changed=fileio_shim.c");
     println!("cargo:rerun-if-changed=libc_shim.c");
 }

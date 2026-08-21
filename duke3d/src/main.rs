@@ -18,6 +18,7 @@ extern "C" {
     fn pvm_set_palette(ptr: u32);
     fn pvm_display(width: u32, height: u32, ptr: u32);
     fn pvm_fetch_epoca_inputs(ptr: u32, capacity: u32) -> u32;
+    fn host_audio_submit(ptr: u32, sample_count: u32) -> u32;
     fn pvm_time_ms() -> u64;
     fn pvm_asset_read(
         name_ptr: u32,
@@ -44,6 +45,11 @@ pub unsafe extern "C" fn pvm_display_wrapper(width: u32, height: u32, ptr: u32) 
 pub unsafe extern "C" fn pvm_fetch_epoca_inputs_wrapper(ptr: u32, capacity: u32) -> u32 {
     pvm_fetch_epoca_inputs(ptr, capacity)
 }
+#[no_mangle]
+pub unsafe extern "C" fn host_audio_submit_wrapper(ptr: u32, sample_count: u32) -> u32 {
+    host_audio_submit(ptr, sample_count)
+}
+
 
 #[no_mangle]
 pub unsafe extern "C" fn pvm_time_ms_wrapper() -> u64 {
