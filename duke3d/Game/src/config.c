@@ -52,6 +52,7 @@ Prepared for public release: 03/21/2003 - Charlie Wiederhold, 3D Realms
 #define OPENFPGA_SETTINGS_SLOT 9
 #define OPENFPGA_SETTINGS_FILENAME SETUPFILENAME
 #define OPENFPGA_SETUPFILENAME OPENFPGA_SETTINGS_FILENAME
+#define OPENFPGA_CONTROLS_VERSION 1
 
 static void CONFIG_RegisterSettingsSlot(void)
 {
@@ -344,6 +345,15 @@ void CONFIG_ReadKeys( void )
 	}
 
        numkeyentries = SCRIPT_NumberEntries( scripthandle, "KeyDefinitions" );
+#ifdef OPENFPGA
+   {
+      int32 controls_version = 0;
+      SCRIPT_GetNumber(scripthandle, "Controls", "BindingVersion",
+                       &controls_version);
+      if (controls_version < OPENFPGA_CONTROLS_VERSION)
+         numkeyentries = 0;
+   }
+#endif
 
    for (i=0;i<numkeyentries;i++)  // i = number in which the functions appear in duke3d.cfg
       {
@@ -925,6 +935,10 @@ void CONFIG_WriteSetup( void )
    SCRIPT_PutNumber( scripthandle, "Controls","MouseAiming",MouseAiming,false,false);
    SCRIPT_PutNumber( scripthandle, "Controls","GameMouseAiming",(int32) ps[myconnectindex].aim_mode,false,false);
    SCRIPT_PutNumber( scripthandle, "Controls","AimingFlag",(int32_t) myaimmode,false,false);
+#ifdef OPENFPGA
+   SCRIPT_PutNumber(scripthandle, "Controls", "BindingVersion",
+                    OPENFPGA_CONTROLS_VERSION, false, false);
+#endif
    
 	// FIX_00016: Build in Keyboard/mouse setup. Mouse now faster.
 	for(i=0; i<MAXMOUSEBUTTONS; i++)

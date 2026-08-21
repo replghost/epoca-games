@@ -109,23 +109,43 @@ struct keyEntry{
     
     
 struct keyEntry    keydefaults[] = {
-	{ "Move_Forward", 	"Up", 		"Kpad8" }, 
-	{ "Move_Backward", 	"Down", 	"Kpad2" }, 
-	{ "Turn_Left", 		"Left", 	"Kpad4" }, 
-	{ "Turn_Right", 	"Right", 	"KPad6" }, 
-	{ "Strafe", 		"LAlt", 	"RAlt" }, 
-	{ "Fire", 			"LCtrl", 	"RCtrl" }, 
-	{ "Open", 			"Space", 	"" }, 
-	{ "Run", 			"LShift", 	"RShift" }, 
-	{ "AutoRun", 		"CapLck", 	"" }, 
-	{ "Jump", 			"A", 		"/" }, 
-	{ "Crouch", 		"Z", 		"" }, 
-	{ "Look_Up", 		"PgUp", 	"Kpad9" }, 
-	{ "Look_Down", 		"PgDn", 	"Kpad3" }, 
-	{ "Look_Left", 		"Insert", 	"Kpad0" }, 
-	{ "Look_Right", 	"Delete", 	"Kpad." }, 
-	{ "Strafe_Left", 	",", 		"" }, 
-	{ "Strafe_Right", 	".", 		"" }, 
+#ifdef OPENFPGA
+	{ "Move_Forward", 	"W", 		"Up" },
+	{ "Move_Backward", 	"S", 		"Down" },
+	{ "Turn_Left", 		"Left", 	"Kpad4" },
+	{ "Turn_Right", 	"Right", 	"KPad6" },
+	{ "Strafe", 		"LAlt", 	"RAlt" },
+	{ "Fire", 			"LCtrl", 	"RCtrl" },
+	{ "Open", 			"E", 		"" },
+	{ "Run", 			"LShift", 	"RShift" },
+	{ "AutoRun", 		"CapLck", 	"" },
+	{ "Jump", 			"Space", 	"/" },
+	{ "Crouch", 		"Z", 		"" },
+	{ "Look_Up", 		"PgUp", 	"Kpad9" },
+	{ "Look_Down", 		"PgDn", 	"Kpad3" },
+	{ "Look_Left", 		"Insert", 	"Kpad0" },
+	{ "Look_Right", 	"Delete", 	"Kpad." },
+	{ "Strafe_Left", 	"A", 		"," },
+	{ "Strafe_Right", 	"D", 		"." },
+#else
+	{ "Move_Forward", 	"Up", 		"Kpad8" },
+	{ "Move_Backward", 	"Down", 	"Kpad2" },
+	{ "Turn_Left", 		"Left", 	"Kpad4" },
+	{ "Turn_Right", 	"Right", 	"KPad6" },
+	{ "Strafe", 		"LAlt", 	"RAlt" },
+	{ "Fire", 			"LCtrl", 	"RCtrl" },
+	{ "Open", 			"Space", 	"" },
+	{ "Run", 			"LShift", 	"RShift" },
+	{ "AutoRun", 		"CapLck", 	"" },
+	{ "Jump", 			"A", 		"/" },
+	{ "Crouch", 		"Z", 		"" },
+	{ "Look_Up", 		"PgUp", 	"Kpad9" },
+	{ "Look_Down", 		"PgDn", 	"Kpad3" },
+	{ "Look_Left", 		"Insert", 	"Kpad0" },
+	{ "Look_Right", 	"Delete", 	"Kpad." },
+	{ "Strafe_Left", 	",", 		"" },
+	{ "Strafe_Right", 	".", 		"" },
+#endif
 	{ "Aim_Up", 		"Home", 	"KPad7" }, 
 	{ "Aim_Down", 		"End", 		"Kpad1" }, 
 	{ "Weapon_1", 		"1", 		"" }, 
@@ -152,7 +172,11 @@ struct keyEntry    keydefaults[] = {
 	{ "Enlarge_Screen", "=", 		"Kpad+" }, 
 	{ "Center_View", 	"KPad5", 	"" }, 
 	{ "Holster_Weapon", "ScrLck", 	"" }, 
-	{ "Show_Opponents_Weapon", "W", "" }, 
+#ifdef OPENFPGA
+	{ "Show_Opponents_Weapon", "O", "" },
+#else
+	{ "Show_Opponents_Weapon", "W", "" },
+#endif
 	{ "Map_Follow_Mode","F", 		"" }, 
 	{ "See_Coop_View", 	"K", 		"" }, 
 	{ "Mouse_Aiming", 	"U", 		"" }, 
@@ -161,7 +185,11 @@ struct keyEntry    keydefaults[] = {
 	{ "Quick_Kick", 	"C", 		"" }, 
 	{ "Next_Weapon", 	"'", 		"" }, 
 	{ "Previous_Weapon",";", 		"" },
+#ifdef OPENFPGA
+	{ "Hide_Weapon", 	"", 		"" },
+#else
 	{ "Hide_Weapon", 	"S", 		"" },
+#endif
 	{ "Auto_Aim", 		"V", 		"" },
 	{ "Console", 		"`", 		"" }
 };

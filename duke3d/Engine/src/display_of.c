@@ -66,7 +66,7 @@ static int sync_next_palette_update = 0;
 
 #define DOCK_MOUSE_DIVISOR  32  /* physical mouse deltas are high-DPI */
 #define DOCK_MOUSE_FIRE_SCANCODE  0x1D  /* LCtrl */
-#define DOCK_MOUSE_USE_SCANCODE   0x39  /* Space */
+#define DOCK_MOUSE_USE_SCANCODE   0x12  /* E */
 #define OPEN_BUTTON_MENU_SCANCODE  0x01  /* Escape = menu back */
 #define B_TAP_USE_MS  500
 #define TAP_USE_HOLD_MS  80
@@ -104,7 +104,7 @@ typedef struct {
 
 static const btn_map_t button_map[] = {
     /* Buttons with shoulder-modified alternatives are reconciled below. */
-    { OF_BTN_L2,     0x39, 0x00 },  /* L2     -> Space  = Open        */
+    { OF_BTN_L2,     0x12, 0x00 },  /* L2     -> E      = Open        */
     { OF_BTN_R2,     0x1D, 0x00 },  /* R2     -> LCtrl  = Fire        */
 };
 
@@ -184,9 +184,9 @@ static const keymod_map_t keymod_map[] = {
 #define SC_EXT    0xE0
 #define SC_FIRE   0x1D  /* LCtrl */
 #define SC_ESCAPE 0x01
-#define SC_OPEN   0x39  /* Space */
+#define SC_OPEN   0x12  /* E */
 #define SC_TAB    0x0F
-#define SC_JUMP   0x1E  /* A */
+#define SC_JUMP   0x39  /* Space */
 #define SC_CROUCH 0x2C  /* Z */
 #define SC_QUICK_KICK      0x2E  /* C */
 #define SC_INVENTORY_USE   0x1C  /* Enter */
