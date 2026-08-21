@@ -518,7 +518,7 @@ void CONTROL_GetInput( ControlInfo *info )
 			/* The Epoca host reports the physical mouse alongside the
 			 * virtual controller. Preserve vertical deltas as pitch rather
 			 * than dropping them in the combined controller mode. */
-			info->dpitch = my * sens_Y * 2;
+			info->dpitch = -(my * sens_Y * 2);
 #endif
 			break;
 
