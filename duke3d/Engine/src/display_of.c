@@ -65,8 +65,8 @@ static uint32_t of_palette[256];
 static int sync_next_palette_update = 0;
 
 #ifdef EPOCA_PVM
-#define DOCK_MOUSE_SCALE    3   /* Match the useful range of Epoca's Quake port */
-#define DOCK_MOUSE_DIVISOR  1   /* Epoca already reports guest-pixel deltas */
+#define DOCK_MOUSE_SCALE    2   /* Epoca relative input: 2/3 engine counts per CSS pixel */
+#define DOCK_MOUSE_DIVISOR  3
 #else
 #define DOCK_MOUSE_SCALE    1
 #define DOCK_MOUSE_DIVISOR  32  /* physical mouse deltas are high-DPI */

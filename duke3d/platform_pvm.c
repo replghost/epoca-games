@@ -125,6 +125,7 @@ void of_input_poll(void) {
             pointer_initialized = 1;
             mouse.present = 1;
         } else if (kind == 6) {
+            pointer_initialized = 0;
             mouse.dx += (int16_t)x;
             mouse.dy += (int16_t)y;
             mouse.present = 1;
