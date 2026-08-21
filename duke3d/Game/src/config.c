@@ -65,14 +65,15 @@ static void CONFIG_RegisterSettingsSlot(void)
 #endif
 
 /* Mouse sensitivity default, in the menu bar's own units: bar() in
- * menues.c runs the slider over 0..63, so 75% of full scale is
- * 0.75 * 63 = 47.  Used both by CONFIG_SetDefaults and as the repair
- * value when a stored setting is out of range.
+ * menues.c runs the slider over 0..63, so 52 leaves adjustment headroom
+ * while providing a useful desktop FPS turn rate.  Used both by
+ * CONFIG_SetDefaults and as the repair value when a stored setting is out
+ * of range.
  *
  * Note this is a DEFAULT: CONFIG_ReadSetup applies it first and then
  * lets the persisted settings slot overwrite it, so it only takes
  * effect where nothing has been saved yet. */
-#define DEFAULT_MOUSE_SENSITIVITY 47
+#define DEFAULT_MOUSE_SENSITIVITY 52
 
 //
 // Sound variables

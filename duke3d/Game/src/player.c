@@ -2112,9 +2112,9 @@ void getinput(short snum)
     if(horiz < -MAXHORIZ) horiz = -MAXHORIZ;
     if(horiz > MAXHORIZ) horiz = MAXHORIZ;
 
-    /* A look-up/down view is held until the player walks forward or back,
-       at which point the horizon eases back to center (see processinput). */
-    if( vel )
+    /* Preserve the original keyboard-look recentering without pulling an
+       actively mouse-aimed view back to the horizon while moving. */
+    if( vel && !myaimmode )
         p->return_to_center = 9;
 
     if(ud.scrollmode && ud.overhead_on)

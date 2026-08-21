@@ -65,8 +65,10 @@ static uint32_t of_palette[256];
 static int sync_next_palette_update = 0;
 
 #ifdef EPOCA_PVM
+#define DOCK_MOUSE_SCALE    3   /* Match the useful range of Epoca's Quake port */
 #define DOCK_MOUSE_DIVISOR  1   /* Epoca already reports guest-pixel deltas */
 #else
+#define DOCK_MOUSE_SCALE    1
 #define DOCK_MOUSE_DIVISOR  32  /* physical mouse deltas are high-DPI */
 #endif
 #define DOCK_MOUSE_FIRE_SCANCODE  0x1D  /* LCtrl */
@@ -519,7 +521,7 @@ static int32_t consume_scaled_mouse_delta(int32_t *accum, int32_t delta)
 {
     int32_t scaled;
 
-    *accum += mouse_counts(delta);
+    *accum += mouse_counts(delta) * DOCK_MOUSE_SCALE;
     scaled = *accum / DOCK_MOUSE_DIVISOR;
     *accum -= scaled * DOCK_MOUSE_DIVISOR;
     return scaled;
