@@ -574,7 +574,8 @@ void shoot(short i,short atwith)
             if(p >= 0)
             {
                 k = EGS(hitsect,hitx,hity,hitz,SHOTSPARK1,-15,10,10,sa,0,0,i,4);
-                sprite[k].extra = *actorscrptr[atwith];
+                if(actorscrptr[atwith])
+                    sprite[k].extra = *actorscrptr[atwith];
                 sprite[k].extra += (TRAND%6);
 
                 if( hitwall == -1 && hitspr == -1)
@@ -689,7 +690,8 @@ void shoot(short i,short atwith)
             else
             {
                 k = EGS(hitsect,hitx,hity,hitz,SHOTSPARK1,-15,24,24,sa,0,0,i,4);
-                sprite[k].extra = *actorscrptr[atwith];
+                if(actorscrptr[atwith])
+                    sprite[k].extra = *actorscrptr[atwith];
 
                 if( hitspr >= 0 )
                 {
