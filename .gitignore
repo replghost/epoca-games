@@ -12,5 +12,9 @@ doom1.wad
 /libresector/bundle/
 /freedoom/*.zip
 .env
+/duke3d/shareware/3dduke13.zip
+/duke3d/shareware/DUKE3D.GRP
+/duke3d/shareware/LICENSE.TXT
+/duke3d/bundle/.bulletin-deploy/
 .env.*
 /.tmp/

@@ -2,6 +2,8 @@
   "$schema": "epoca:experimental-product/v1",
   "$v": 1,
   "kind": "framebuffer",
+  "displayName": "Duke Nukem 3D Engine",
+  "description": "Run Duke Nukem 3D shareware in Epoca with a sandboxed PolkaVM engine.",
   "appVersion": [0, 1, 0],
   "runtime": {
     "kind": "polkavm",
@@ -12,7 +14,8 @@
       "abiVersion": 1,
       "controls": [
         "WASD Move",
-        "Mouse / Arrows Look",
+        "Mouse Look",
+        "Arrows Look",
         "Mouse 1 / Ctrl Fire",
         "Space Jump · E Use",
         "Esc Menu"
@@ -38,9 +41,9 @@
       "delivery": "read-only-mount",
       "mount": "game/duke3d.grp",
       "default": {
-        "product": "libresector",
-        "item": "demo-map",
-        "version": [0, 1, 0]
+        "product": "3dduke13-zip",
+        "item": "shareware-grp",
+        "version": [1, 3, 0]
       }
     }
   ]
