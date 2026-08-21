@@ -1956,6 +1956,12 @@ void getinput(short snum)
     loc.bits |=   ACTION(gamefunc_Inventory_Right)<<27;
     loc.bits |=   ACTION(gamefunc_TurnAround)<<28;
     loc.bits |=   ACTION(gamefunc_Open)<<29;
+#ifdef EPOCA_PVM
+    /* Space is Jump in Epoca, but Duke's death prompt still says "press
+       space" and the restart script listens to the Open bit. */
+    if (p->dead_flag && KB_KeyPressed(sc_Space))
+        loc.bits |= 1<<29;
+#endif
     loc.bits |=   ACTION(gamefunc_Inventory)<<30;
     loc.bits |=   KB_KeyPressed(sc_Escape)<<31;
 
