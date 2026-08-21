@@ -64,7 +64,11 @@ static uint8_t drawpixel_color = 0;
 static uint32_t of_palette[256];
 static int sync_next_palette_update = 0;
 
+#ifdef EPOCA_PVM
+#define DOCK_MOUSE_DIVISOR  1   /* Epoca already reports guest-pixel deltas */
+#else
 #define DOCK_MOUSE_DIVISOR  32  /* physical mouse deltas are high-DPI */
+#endif
 #define DOCK_MOUSE_FIRE_SCANCODE  0x1D  /* LCtrl */
 #define DOCK_MOUSE_USE_SCANCODE   0x12  /* E */
 #define OPEN_BUTTON_MENU_SCANCODE  0x01  /* Escape = menu back */

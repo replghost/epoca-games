@@ -827,12 +827,6 @@ void CONFIG_ReadSetup( void )
    SCRIPT_GetNumber( scripthandle, "Controls","MouseAiming",&MouseAiming);
    SCRIPT_GetNumber( scripthandle, "Controls","GameMouseAiming",(int32 *)&ps[0].aim_mode);
    SCRIPT_GetNumber( scripthandle, "Controls","AimingFlag",(int32 *)&myaimmode);
-#ifdef OPENFPGA
-   /* Epoca presents mouse input as a permanent first-person look device. */
-   MouseAiming = 0;
-   myaimmode = 1;
-   ps[0].aim_mode = 1;
-#endif
 
    CONTROL_ClearAssignments();
 

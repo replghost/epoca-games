@@ -1858,6 +1858,9 @@ void getinput(short snum)
                 FTA(44+myaimmode,p,1);
           }
 	 }
+#ifdef EPOCA_PVM
+    myaimmode = 1;
+#endif
 
 	// FIX_00039: Toggle autoaim between Normal (full) and partial (on bullet weapons only)
 	if( ACTION(gamefunc_Auto_Aim) && nHostForceDisableAutoaim == 0)
