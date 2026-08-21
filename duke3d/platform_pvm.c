@@ -117,8 +117,8 @@ void of_input_poll(void) {
             mouse.present = 1;
         } else if (kind == 5) {
             if (pointer_initialized) {
-                mouse.dx += (int32_t)x - pointer_x;
-                mouse.dy += (int32_t)y - pointer_y;
+                mouse.dx += (int16_t)(x - pointer_x);
+                mouse.dy += (int16_t)(y - pointer_y);
             }
             pointer_x = x;
             pointer_y = y;
