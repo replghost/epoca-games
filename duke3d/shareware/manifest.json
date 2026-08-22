@@ -1,0 +1,30 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "content",
+  "displayName": "Duke Nukem 3D v1.3d Shareware",
+  "description": "The original, unmodified Duke Nukem 3D v1.3d shareware distribution for use with Epoca.",
+  "contentVersion": [1, 3, 0],
+  "items": [
+    {
+      "id": "shareware-grp",
+      "type": "application/x-duke3d-grp",
+      "traits": ["game", "duke3d-grp", "shareware"],
+      "entry": "DUKE3D.GRP",
+      "license": "Duke Nukem 3D Shareware License",
+      "integrity": {
+        "sha256": "f943d0c2e2a0803a644a2107c81ea897dec87596d9dd1a6a432131ad6f5818d6"
+      }
+    },
+    {
+      "id": "original-zip",
+      "type": "application/zip",
+      "traits": ["game-data", "archive", "shareware"],
+      "entry": "3dduke13.zip",
+      "license": "Duke Nukem 3D Shareware License",
+      "integrity": {
+        "sha256": "c67efd179022bc6d9bde54f404c707cbcbdc15423c20be72e277bc2bdddf3d0e"
+      }
+    }
+  ]
+}

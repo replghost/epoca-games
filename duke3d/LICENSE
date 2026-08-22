@@ -1,0 +1,9 @@
+This project ports the Duke Nukem 3D version 1.5 source from
+https://github.com/openfpgaOS/Duke3D.
+
+The engine and game source files are licensed under the GNU General Public
+License version 2 or, at your option, any later version, as stated in their
+source headers. See https://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+
+Duke Nukem 3D game data is not included. DUKE3D.GRP remains copyrighted by
+its respective owner and must be supplied separately by the user.
