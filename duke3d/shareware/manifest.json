@@ -8,18 +8,8 @@
   "items": [
     {
       "id": "shareware-grp",
-      "type": "application/x-duke3d-grp",
-      "traits": ["game", "duke3d-grp", "shareware"],
-      "entry": "DUKE3D.GRP",
-      "license": "Duke Nukem 3D Shareware License",
-      "integrity": {
-        "sha256": "f943d0c2e2a0803a644a2107c81ea897dec87596d9dd1a6a432131ad6f5818d6"
-      }
-    },
-    {
-      "id": "original-zip",
-      "type": "application/zip",
-      "traits": ["game-data", "archive", "shareware"],
+      "type": "application/x-duke3d-shareware-zip",
+      "traits": ["game", "duke3d-grp", "shareware", "original-distribution"],
       "entry": "3dduke13.zip",
       "license": "Duke Nukem 3D Shareware License",
       "integrity": {
