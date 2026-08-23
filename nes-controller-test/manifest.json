@@ -1,0 +1,18 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "content",
+  "contentVersion": [1, 0, 0],
+  "items": [
+    {
+      "id": "controller-test",
+      "type": "application/x-nes-rom",
+      "traits": ["game", "nes-cartridge"],
+      "entry": "controller-test.nes",
+      "license": "MIT",
+      "integrity": {
+        "sha256": "fd51ca67b872966753e22ad9c6784d40cf0f6aafb6b365fb14412f587f45fcb8"
+      }
+    }
+  ]
+}

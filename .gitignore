@@ -11,6 +11,7 @@ doom1.wad
 /freedoom/bundle/
 /libresector/bundle/
 /freedoom/*.zip
+/nes-controller-test/bundle/
 .env
 /duke3d/shareware/3dduke13.zip
 /duke3d/shareware/DUKE3D.GRP

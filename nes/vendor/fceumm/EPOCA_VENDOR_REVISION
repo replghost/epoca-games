@@ -1,0 +1,6 @@
+Repository: https://github.com/libretro/libretro-fceumm
+Commit: 236ccdfc911e84c60fea6b9d0699c2d440a8de14
+Tree: 97d5167daee96af5726dbc7f391bfd17ba3de240
+License: GPL-2.0-only
+Local patches:
+- src/input.c: guard the second VS Uni GameInfo dereference so PolkaVM does not contain an invalid absolute null load.
