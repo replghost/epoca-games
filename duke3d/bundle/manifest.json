@@ -47,7 +47,7 @@
       "delivery": "read-only-mount",
       "mount": "game/duke3d.grp",
       "default": {
-        "product": "3dduke13-zip",
+        "product": "duke3dshareware",
         "item": "shareware-grp",
         "version": [1, 3, 0]
       }
