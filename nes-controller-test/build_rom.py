@@ -107,8 +107,9 @@ def build_program() -> tuple[bytes, dict[str, int]]:
     a.emit(0xCA)  # DEX
     a.branch(0xD0, "fill_inner")
 
-    # Continuous pulse tone.
-    for address, value in ((0x4015, 0x01), (0x4000, 0x9F), (0x4001, 0x00), (0x4002, 0xFD), (0x4003, 0x08)):
+    # Continuous pulse tone. Bit 5 halts the length counter so the channel
+    # remains audible after the initial validation frames.
+    for address, value in ((0x4015, 0x01), (0x4000, 0xBF), (0x4001, 0x00), (0x4002, 0xFD), (0x4003, 0x08)):
         a.emit(0xA9, value)
         a.absolute(0x8D, address)
 

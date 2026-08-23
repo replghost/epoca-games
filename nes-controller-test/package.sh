@@ -3,7 +3,7 @@ set -euo pipefail
 
 CARTRIDGE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROM="$CARTRIDGE_DIR/bundle/controller-test.nes"
-EXPECTED_SHA256="fd51ca67b872966753e22ad9c6784d40cf0f6aafb6b365fb14412f587f45fcb8"
+EXPECTED_SHA256="76ed7c02c5137d9d0f478f71e0200a60b2e469b778755b78b9a3f1865918a150"
 
 python3 "$CARTRIDGE_DIR/build_rom.py" "$ROM"
 printf '%s  %s\n' "$EXPECTED_SHA256" "$ROM" | sha256sum --check --status || {
