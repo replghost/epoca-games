@@ -2,7 +2,7 @@
   "$schema": "epoca:experimental-product/v1",
   "$v": 1,
   "kind": "content",
-  "contentVersion": [1, 0, 0],
+  "contentVersion": [1, 0, 1],
   "items": [
     {
       "id": "controller-test",
@@ -11,7 +11,7 @@
       "entry": "controller-test.nes",
       "license": "MIT",
       "integrity": {
-        "sha256": "fd51ca67b872966753e22ad9c6784d40cf0f6aafb6b365fb14412f587f45fcb8"
+        "sha256": "76ed7c02c5137d9d0f478f71e0200a60b2e469b778755b78b9a3f1865918a150"
       }
     }
   ]
