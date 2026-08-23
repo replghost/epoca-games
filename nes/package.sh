@@ -50,6 +50,7 @@ python3 - \
   "$BUNDLE_DIR/app.polkavm" \
   "$NES_DIR/vendor/fceumm/Copying" \
   "$NES_DIR/vendor/fceumm/EPOCA_VENDOR_REVISION" \
+  "$NES_DIR/index.html" \
   "$NES_DIR/nes.prod" <<'PY'
 import os
 import sys
@@ -61,8 +62,9 @@ sources = [
     (sys.argv[2], "app.polkavm", 0o644),
     (sys.argv[3], "LICENSE", 0o644),
     (sys.argv[4], "SOURCE.txt", 0o644),
+    (sys.argv[5], "index.html", 0o644),
 ]
-output = sys.argv[5]
+output = sys.argv[6]
 fd, temporary = tempfile.mkstemp(prefix=".nes.prod.", dir=os.path.dirname(output))
 os.close(fd)
 try:
