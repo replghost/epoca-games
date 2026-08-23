@@ -25,7 +25,10 @@
       "handlers": [
         {
           "kind": "content",
-          "types": ["application/x-duke3d-grp"],
+          "types": [
+            "application/x-duke3d-grp",
+            "application/x-duke3d-shareware-zip"
+          ],
           "traits": ["duke3d-grp"],
           "actions": ["open"]
         }
@@ -36,7 +39,10 @@
     {
       "id": "grp",
       "required": true,
-      "accepts": ["application/x-duke3d-grp"],
+      "accepts": [
+        "application/x-duke3d-grp",
+        "application/x-duke3d-shareware-zip"
+      ],
       "traits": ["duke3d-grp"],
       "delivery": "read-only-mount",
       "mount": "game/duke3d.grp",

@@ -26,6 +26,9 @@ export PVM_LLVM_AR PVM_LLVM_RANLIB
 if [[ -n "${DUKE3D_GRP:-}" && (! -f "$DUKE3D_GRP" || ! -r "$DUKE3D_GRP") ]]; then
   fail "DUKE3D_GRP is not a readable file: $DUKE3D_GRP"
 fi
+if [[ -n "${DUKE3D_SHAREWARE_ZIP:-}" && (! -f "$DUKE3D_SHAREWARE_ZIP" || ! -r "$DUKE3D_SHAREWARE_ZIP") ]]; then
+  fail "DUKE3D_SHAREWARE_ZIP is not a readable file: $DUKE3D_SHAREWARE_ZIP"
+fi
 
 DUKE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUNDLE_DIR="$DUKE_DIR/bundle"
@@ -81,5 +84,38 @@ finally:
     if os.path.exists(temporary):
         os.unlink(temporary)
 PY
+if [[ -n "${DUKE3D_SHAREWARE_ZIP:-}" ]]; then
+  python3 - "$DUKE3D_SHAREWARE_ZIP" "$DUKE_DIR/shareware/3dduke13.zip" <<'PY'
+import hashlib
+import os
+import shutil
+import sys
+import tempfile
+
+source, output = sys.argv[1:]
+expected = "c67efd179022bc6d9bde54f404c707cbcbdc15423c20be72e277bc2bdddf3d0e"
+digest = hashlib.sha256()
+with open(source, "rb") as handle:
+    for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+        digest.update(chunk)
+actual = digest.hexdigest()
+if actual != expected:
+    raise SystemExit(
+        f"package.sh: Duke shareware archive SHA-256 mismatch: expected {expected}, got {actual}"
+    )
+
+fd, temporary = tempfile.mkstemp(prefix=".3dduke13.zip.", dir=os.path.dirname(output))
+os.close(fd)
+try:
+    shutil.copyfile(source, temporary)
+    os.chmod(temporary, 0o644)
+    os.replace(temporary, output)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+PY
+  printf 'Staged unchanged shareware archive at %s\n' "$DUKE_DIR/shareware/3dduke13.zip"
+fi
+
 
 printf 'Created %s\n' "$DUKE_DIR/duke3d.prod"
