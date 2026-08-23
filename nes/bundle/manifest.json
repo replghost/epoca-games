@@ -1,0 +1,48 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "framebuffer",
+  "appVersion": [0, 1, 0],
+  "runtime": {
+    "kind": "polkavm",
+    "entrypoint": "app.polkavm"
+  },
+  "modalities": {
+    "framebuffer": {
+      "abiVersion": 1,
+      "controls": [
+        "P1 WASD Move",
+        "P1 J / K: B / A",
+        "P1 Right Shift / Enter: Select / Start",
+        "P2 Arrows Move",
+        "P2 N / M: B / A",
+        "P2 Backspace / Tab: Select / Start"
+      ]
+    },
+    "generalInput": {
+      "handlers": [
+        {
+          "kind": "content",
+          "types": ["application/x-nes-rom"],
+          "traits": ["nes-cartridge"],
+          "actions": ["open"]
+        }
+      ]
+    }
+  },
+  "contentSlots": [
+    {
+      "id": "cartridge",
+      "required": true,
+      "accepts": ["application/x-nes-rom"],
+      "traits": ["nes-cartridge"],
+      "delivery": "read-only-mount",
+      "mount": "game/cartridge.nes",
+      "default": {
+        "product": "nes-controller-test",
+        "item": "controller-test",
+        "version": [1, 0, 0]
+      }
+    }
+  ]
+}
