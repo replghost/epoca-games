@@ -212,6 +212,24 @@ def key(client: Marionette, value: str, down: bool) -> None:
         },
     )
 
+def activate_audio(client: Marionette) -> None:
+    client.command(
+        "WebDriver:PerformActions",
+        {
+            "actions": [
+                {
+                    "type": "key",
+                    "id": "activation",
+                    "actions": [
+                        {"type": "keyDown", "value": "d"},
+                        {"type": "pause", "duration": 250},
+                        {"type": "keyUp", "value": "d"},
+                    ],
+                }
+            ]
+        },
+    )
+
 
 def save_file(profile: Path) -> Path | None:
     files = list((profile / "epoca-pvm-saves").glob(f"{PRODUCT_ID}-*.sav"))
@@ -276,22 +294,7 @@ def run_once(
             fps = (clocked["frames"] - initial_frames) / (time.monotonic() - started)
             if not 50 <= fps <= 75:
                 raise RuntimeError(f"NES frame rate out of range: {fps}")
-            client.command(
-                "WebDriver:PerformActions",
-                {
-                    "actions": [
-                        {
-                            "type": "key",
-                            "id": "activation",
-                            "actions": [
-                                {"type": "keyDown", "value": "d"},
-                                {"type": "pause", "duration": 250},
-                                {"type": "keyUp", "value": "d"},
-                            ],
-                        }
-                    ]
-                },
-            )
+            activate_audio(client)
             key(client, "d", True)
             deadline = time.monotonic() + 10
             audio = snapshot(client)
@@ -330,6 +333,132 @@ def run_once(
             process.wait(timeout=20)
 
 
+def process_tree_rss_kib(root_pid: int) -> int:
+    pending = [root_pid]
+    visited = set()
+    total = 0
+    while pending:
+        pid = pending.pop()
+        if pid in visited:
+            continue
+        visited.add(pid)
+        status = Path(f"/proc/{pid}/status")
+        try:
+            for line in status.read_text(encoding="utf-8").splitlines():
+                if line.startswith("VmRSS:"):
+                    total += int(line.split()[1])
+                    break
+            children = Path(f"/proc/{pid}/task/{pid}/children")
+            pending.extend(int(child) for child in children.read_text().split())
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+    return total
+
+
+def run_soak(
+    binary: Path,
+    engine: Path,
+    cartridge: Path,
+    profile: Path,
+    duration: int,
+) -> dict:
+    port = free_port()
+    write_preferences(profile, port)
+    environment = dict(os.environ)
+    environment.update({"MOZ_MARIONETTE": "1", "MOZ_HEADLESS": "1"})
+    with (profile / "browser.log").open("a", encoding="utf-8") as log:
+        process = subprocess.Popen(
+            [
+                str(binary),
+                "-profile",
+                str(profile),
+                "-marionette",
+                "-remote-allow-system-access",
+                "--new-instance",
+            ],
+            env=environment,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+        )
+    client = Marionette(port)
+    try:
+        client.connect()
+        register_product(client, engine, cartridge)
+        client.command("WebDriver:Navigate", {"url": PRODUCT_URL})
+        initial = wait_for_runtime(client, 30)
+        activate_audio(client)
+        deadline = time.monotonic() + 10
+        started_state = snapshot(client)
+        while time.monotonic() < deadline and (
+            started_state["audioSamples"] == 0
+            or started_state["audioNonzero"] != "true"
+        ):
+            time.sleep(0.2)
+            started_state = snapshot(client)
+        if started_state["audioNonzero"] != "true":
+            raise RuntimeError(f"NES PCM remained silent before soak: {started_state}")
+
+        started = time.monotonic()
+        samples = []
+        while True:
+            elapsed = time.monotonic() - started
+            if elapsed >= duration:
+                break
+            time.sleep(min(10.0, duration - elapsed))
+            state = snapshot(client)
+            if state["status"] or state["runtime"] != "POLKAVM / JIT":
+                raise RuntimeError(f"NES runtime failed during soak: {state}")
+            saved = save_file(profile)
+            samples.append(
+                {
+                    "elapsedSeconds": time.monotonic() - started,
+                    "frames": state["frames"],
+                    "audioSamples": state["audioSamples"],
+                    "rssKiB": process_tree_rss_kib(process.pid),
+                    "saveCounter": saved.read_bytes()[0] if saved else None,
+                }
+            )
+
+        final = snapshot(client)
+        elapsed = time.monotonic() - started
+        fps = (final["frames"] - started_state["frames"]) / elapsed
+        if not 50 <= fps <= 75:
+            raise RuntimeError(f"NES soak frame rate out of range: {fps}")
+        if (
+            final["audioNonzero"] != "true"
+            or final["audioSamples"] <= started_state["audioSamples"]
+        ):
+            raise RuntimeError(f"NES audio stopped during soak: {final}")
+        memory = [sample["rssKiB"] for sample in samples]
+        memory_span = max(memory) - min(memory)
+        memory_delta = memory[-1] - memory[0]
+        if memory_delta > 256 * 1024:
+            raise RuntimeError(
+                f"NES browser process tree retained {memory_delta / 1024:.1f} MiB"
+            )
+        saved_path, saved = stop_and_read_save(client, profile, None)
+        return {
+            "durationSeconds": elapsed,
+            "fps": fps,
+            "initial": initial,
+            "final": final,
+            "memoryMinMiB": min(memory) / 1024,
+            "memoryMaxMiB": max(memory) / 1024,
+            "memorySpanMiB": memory_span / 1024,
+            "memoryDeltaMiB": memory_delta / 1024,
+            "save": str(saved_path),
+            "saveCounter": saved[0],
+            "samples": samples,
+        }
+    finally:
+        client.close()
+        try:
+            process.wait(timeout=20)
+        except subprocess.TimeoutExpired:
+            process.terminate()
+            process.wait(timeout=20)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("binary", type=Path)
@@ -340,6 +469,7 @@ def main() -> None:
         default=Path(__file__).parents[1] / "nes-controller-test" / "bundle" / "controller-test.nes",
     )
     parser.add_argument("--keep-profile", action="store_true")
+    parser.add_argument("--soak-seconds", type=int, default=0)
     arguments = parser.parse_args()
     binary = arguments.binary.resolve(strict=True)
     engine = arguments.engine.resolve(strict=True)
@@ -347,14 +477,35 @@ def main() -> None:
     cache = Path.home() / ".cache"
     profile = Path(tempfile.mkdtemp(prefix="epoca-nes-browser-", dir=cache))
     try:
-        first = run_once(binary, engine, cartridge, profile, 60, True)
-        second = run_once(binary, engine, cartridge, profile, 90, False)
-        advance = (second["counter"] - first["counter"]) % 256
-        if not 5 <= advance <= 180:
-            raise RuntimeError(
-                f"NES save did not restore and advance: {first['counter']} -> {second['counter']}"
+        if arguments.soak_seconds:
+            if arguments.soak_seconds < 30:
+                raise ValueError("--soak-seconds must be at least 30")
+            print(
+                json.dumps(
+                    run_soak(
+                        binary,
+                        engine,
+                        cartridge,
+                        profile,
+                        arguments.soak_seconds,
+                    ),
+                    indent=2,
+                )
             )
-        print(json.dumps({"first": first, "second": second, "saveAdvance": advance}, indent=2))
+        else:
+            first = run_once(binary, engine, cartridge, profile, 60, True)
+            second = run_once(binary, engine, cartridge, profile, 90, False)
+            advance = (second["counter"] - first["counter"]) % 256
+            if not 5 <= advance <= 180:
+                raise RuntimeError(
+                    f"NES save did not restore and advance: {first['counter']} -> {second['counter']}"
+                )
+            print(
+                json.dumps(
+                    {"first": first, "second": second, "saveAdvance": advance},
+                    indent=2,
+                )
+            )
     finally:
         if arguments.keep_profile:
             print(f"Profile retained at {profile}")
