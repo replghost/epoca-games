@@ -227,7 +227,7 @@ static bool environment_callback(unsigned command, void *data) {
     *(unsigned *)data = RETRO_LANGUAGE_ENGLISH;
     return true;
   case RETRO_ENVIRONMENT_GET_TARGET_SAMPLE_RATE:
-    *(double *)data = 48000.0;
+    *(unsigned *)data = 48000u;
     return true;
   case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
   case RETRO_ENVIRONMENT_SET_VARIABLES:
