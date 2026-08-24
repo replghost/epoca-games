@@ -32,7 +32,7 @@ try:
         "manifest.json": manifest_bytes,
         "controller-test.nes": rom,
     }
-    for name in ("LICENSE", "build_rom.py", "index.html"):
+    for name in ("LICENSE", "build_rom.py"):
         with open(os.path.join(root, name), "rb") as handle:
             files[name] = handle.read()
     for name, data in files.items():
