@@ -135,11 +135,8 @@ const done = arguments[arguments.length - 1];
     "resource:///modules/EpocaDotAppRegistry.sys.mjs"
   );
   const assets = Object.create(null);
-  for (const path of ["/manifest.json", "/app.polkavm", "/index.html"]) {
-    let source = PathUtils.join(engineRoot, ...path.slice(1).split("/"));
-    if (path === "/index.html" && !(await IOUtils.exists(source))) {
-      source = PathUtils.join(PathUtils.parent(engineRoot), "index.html");
-    }
+  for (const path of ["/manifest.json", "/app.polkavm"]) {
+    const source = PathUtils.join(engineRoot, ...path.slice(1).split("/"));
     assets[path] = await IOUtils.read(source);
   }
   assets["/game/cartridge.nes"] = await IOUtils.read(cartridgePath);

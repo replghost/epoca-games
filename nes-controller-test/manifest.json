@@ -2,7 +2,7 @@
   "$schema": "epoca:experimental-product/v1",
   "$v": 1,
   "kind": "content",
-  "contentVersion": [1, 0, 1],
+  "contentVersion": [1, 0, 2],
   "items": [
     {
       "id": "controller-test",
