@@ -59,6 +59,14 @@ Build a subset:
 APP=doom,egui-kitchen-sink npm run build
 ```
 
+Build the separately distributable Duke Nukem 3D v1.3d shareware content package:
+
+```bash
+./content/duke3d-shareware/package.sh
+```
+
+That package downloads and verifies the original `3dduke13.zip`, then republishes the archive unchanged with its shareware license. The Duke application continues to use LibreSector by default because publishing only an extracted `DUKE3D.GRP` would violate the shareware distribution conditions.
+
 Generated release metadata under `dist/<app>.release.json` records the CID, App version, manifest SHA-256, and CAR SHA-256.
 
 ## Verification contracts
