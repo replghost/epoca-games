@@ -1,7 +1,7 @@
 import manifest from "./manifest.json" with { type: "json" };
 
 export default {
-  domain: process.env.MANIFEST_DOMAIN ?? "dn3dengine.paseo",
+  domain: process.env.MANIFEST_DOMAIN ?? "duke.paseo",
   displayName: "Duke Nukem 3D Engine",
   description:
     "A sandboxed PolkaVM Duke3D port packaged with the original v1.3d shareware episode.",
