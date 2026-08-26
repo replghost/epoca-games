@@ -5,7 +5,7 @@ const root = resolve(import.meta.dirname, "..");
 const dotli = process.env.DOTLI_REPO;
 if (!dotli) throw new Error("DOTLI_REPO must point to a Dotli checkout");
 const host = resolve(dotli, "apps", "host");
-for (const app of ["doom", "duke3d", "nes"]) {
+for (const app of ["doom", "quake", "duke3d", "nes"]) {
   await run(
     "bunx",
     [

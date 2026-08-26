@@ -7,6 +7,7 @@ import { pathToFileURL } from "node:url";
 const root = resolve(import.meta.dirname, "..");
 const expected = {
   doom: "framebuffer",
+  quake: "framebuffer",
   duke3d: "framebuffer",
   nes: "framebuffer",
   "egui-kitchen-sink": "tri2d",
@@ -57,8 +58,11 @@ for (const [app, profile] of Object.entries(expected)) {
 test("commercial game data is not a committed app source dependency", async () => {
   const doom = await readFile(resolve(root, "apps/doom/package.sh"), "utf8");
   const duke = await readFile(resolve(root, "apps/duke3d/package.sh"), "utf8");
+  const quake = await readFile(resolve(root, "apps/quake/package.sh"), "utf8");
   assert.match(doom, /content\/freedoom\/package\.sh/);
   assert.match(duke, /content\/libresector\/package\.sh/);
+  assert.match(quake, /content\/librequake\/package\.sh/);
   assert.doesNotMatch(doom, /\bdoom1\.wad\b/);
   assert.doesNotMatch(duke, /DUKE3D_SHAREWARE_ZIP/);
+  assert.doesNotMatch(quake, /\bid1\/pak[01]\.pak\b/);
 });

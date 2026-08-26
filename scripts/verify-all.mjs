@@ -9,6 +9,7 @@ import { UnixFS } from "ipfs-unixfs";
 const root = resolve(import.meta.dirname, "..");
 const apps = [
   "doom",
+  "quake",
   "duke3d",
   "nes",
   "egui-kitchen-sink",
@@ -137,6 +138,13 @@ function verifyLicensing(app, files) {
       "game/doom.wad",
       "LICENSES/doomgeneric-GPL-2.0.txt",
       "LICENSES/Freedoom-COPYING.txt",
+    ],
+    quake: [
+      "pak0.pak",
+      "pak1.pak",
+      "LICENSES/Quake-GPL-2.0-or-later.txt",
+      "LICENSES/LibreQuake-BSD-3-Clause.txt",
+      "LICENSES/LibreQuake-GPL-2.0.txt",
     ],
     duke3d: [
       "game/duke3d.grp",

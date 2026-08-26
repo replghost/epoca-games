@@ -19,6 +19,7 @@ __pycache__/
 /apps/scene-lab/assets/
 /content/*/bundle/
 /content/freedoom/*.zip
+/content/librequake/*.zip
 /content/duke3d-shareware/*.zip
 /content/duke3d-shareware/DUKE3D.GRP
 /content/duke3d-shareware/LICENSE.TXT

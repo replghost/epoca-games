@@ -13,6 +13,7 @@ if not HOST:
 
 APPS = {
     "doom": "framebuffer",
+    "quake": "framebuffer",
     "duke3d": "framebuffer",
     "nes": "framebuffer",
     "egui-kitchen-sink": "tri2d",

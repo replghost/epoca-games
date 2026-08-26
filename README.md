@@ -6,16 +6,17 @@ The repository is host-neutral. Artifacts are packaged once and are consumed unc
 
 ## Applications
 
-| App                 | Profile         | Source license   | Packaged content                      |
-| ------------------- | --------------- | ---------------- | ------------------------------------- |
-| `doom`              | `framebuffer`   | GPL-2.0          | Freedoom Phase 1, BSD-3-Clause        |
-| `duke3d`            | `framebuffer`   | GPL-2.0-or-later | LibreSector, CC0-1.0                  |
-| `nes`               | `framebuffer`   | GPL-2.0          | Reproducible controller-test ROM, MIT |
-| `egui-kitchen-sink` | `tri2d`         | MPL-2.0          | None                                  |
-| `gpu-cube`          | `webgpu-raster` | MPL-2.0          | None                                  |
-| `scene-lab`         | `webgpu-raster` | MPL-2.0          | Reproducible glTF-derived mesh        |
+| App                 | Profile         | Source license   | Packaged content                                   |
+| ------------------- | --------------- | ---------------- | -------------------------------------------------- |
+| `doom`              | `framebuffer`   | GPL-2.0          | Freedoom Phase 1, BSD-3-Clause                     |
+| `quake`             | `framebuffer`   | GPL-2.0-or-later | LibreQuake Lite, BSD-3-Clause and GPL-2.0-or-later |
+| `duke3d`            | `framebuffer`   | GPL-2.0-or-later | LibreSector, CC0-1.0                               |
+| `nes`               | `framebuffer`   | GPL-2.0          | Reproducible controller-test ROM, MIT              |
+| `egui-kitchen-sink` | `tri2d`         | MPL-2.0          | None                                               |
+| `gpu-cube`          | `webgpu-raster` | MPL-2.0          | None                                               |
+| `scene-lab`         | `webgpu-raster` | MPL-2.0          | Reproducible glTF-derived mesh                     |
 
-A sample is included only when its executable source and every default asset are reproducible and legally redistributable. Commercial Doom IWADs and Duke Nukem 3D GRP files are never committed. A Quake sample should enter this repository only with its engine source and an explicitly redistributable default PAK; an opaque deployed binary is not accepted as source.
+A sample is included only when its executable source and every default asset are reproducible and legally redistributable. Commercial Doom IWADs and Duke Nukem 3D GRP files are never committed. Quake uses the same PolkaPorts engine revision deployed at `epocaquake.paseo`, rebuilt from source and packaged with the pinned LibreQuake Lite release.
 
 ## Layout
 
@@ -35,8 +36,8 @@ Each app has one `manifest.json`. Its `bulletin-deploy.config.mjs` imports that 
 - Node.js 22 or newer
 - Python 3
 - Rust `nightly-2025-05-10` and `nightly-2025-10-09`, both with `rust-src`
-- `polkatool` 0.31
-- Clang/LLVM with the RISC-V target for the C-based game ports
+- `polkatool` 0.31 for the Rust/C samples
+- Clang/LLVM with the RISC-V target for the C-based game ports; Quake bootstraps the pinned PolkaPorts `polkatool` 0.36 toolchain
 
 ```bash
 rustup toolchain install nightly-2025-05-10 nightly-2025-10-09 --component rust-src
@@ -80,7 +81,7 @@ Generated release metadata under `dist/<app>.release.json` records the CID, App 
 - required asset licenses and attribution
 - Host compatibility expectations
 
-The Doom and Duke framebuffer samples launch in both Epoca and Dotli. NES launches in Dotli; Epoca's current native compiler traps during NES initialization, and `dist/compatibility.json` records that observed host boundary. Tri2D and WebGPU Raster samples launch in Epoca; Dotli must skip them as unsupported profiles until it implements those contracts, never substitute framebuffer.
+The Doom, Quake, and Duke framebuffer samples launch in both Epoca and Dotli. NES launches in Dotli; Epoca's current native compiler traps during NES initialization, and `dist/compatibility.json` records that observed host boundary. Tri2D and WebGPU Raster samples launch in Epoca; Dotli must skip them as unsupported profiles until it implements those contracts, never substitute framebuffer.
 
 Run the native Epoca process-host smoke matrix against every supported profile:
 
