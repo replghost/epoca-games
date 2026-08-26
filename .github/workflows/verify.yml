@@ -1,0 +1,43 @@
+name: verify-runtime-examples
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: nightly-2025-10-09
+          components: rust-src
+      - name: Install legacy game toolchain
+        run: rustup toolchain install nightly-2025-05-10 --component rust-src
+      - name: Install PolkaVM linker
+        run: cargo install polkatool --version 0.31.0 --locked
+      - name: Install JavaScript dependencies
+        run: npm ci
+      - name: Check source contracts
+        run: npm test
+      - name: Build every App v2 artifact
+        run: npm run build
+      - name: Verify CAR identity and licenses
+        run: npm run verify
+      - name: Upload release identities
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-example-releases
+          path: |
+            dist/*.release.json
+            dist/compatibility.json

@@ -1,0 +1,106 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "Epoca representative asset"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Beacon Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "Beacon",
+      "mesh": 0,
+      "rotation": [
+        0.0,
+        0.1305262,
+        0.0,
+        0.9914449
+      ]
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Beacon",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2
+          },
+          "indices": 3,
+          "material": 0
+        }
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "name": "Warm Ceramic",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.95,
+          0.58,
+          0.22,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.72
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 816,
+      "uri": "data:application/octet-stream;base64,AAAAADMzsz8AAAAARpQhv9LT5r5GlCG/AAAAPwAAAAAAAIA/AAAAAAAAAABGlCG/0tPmvkaUIb8AAAAAAACAPwAAAAAAAAAAAACAP0aUIb/S0+a+RpQhvwAAgD8AAIA/AAAAADMzsz8AAAAARpQhP9LT5r5GlCG/AAAAPwAAAAAAAAAAAAAAAAAAgD9GlCE/0tPmvkaUIb8AAAAAAACAPwAAgL8AAAAAAAAAAEaUIT/S0+a+RpQhvwAAgD8AAIA/AAAAADMzsz8AAAAARpQhP9LT5r5GlCE/AAAAPwAAAAAAAIC/AAAAAAAAAABGlCE/0tPmvkaUIT8AAAAAAACAPwAAAAAAAAAAAACAv0aUIT/S0+a+RpQhPwAAgD8AAIA/AAAAADMzsz8AAAAARpQhv9LT5r5GlCE/AAAAPwAAAAAAAAAAAAAAAAAAgL9GlCG/0tPmvkaUIT8AAAAAAACAPwAAgD8AAAAAAAAAAEaUIb/S0+a+RpQhPwAAgD8AAIA/AAAAAJqZmb8AAAAACfUbP932Ab8J9Rs/AAAAPwAAAAAAAIA/AAAAAAAAAAAJ9Rs/3fYBvwn1Gz8AAAAAAACAPwAAAAAAAAAAAACAPwn1Gz/d9gG/CfUbPwAAgD8AAIA/AAAAAJqZmb8AAAAACfUbv932Ab8J9Rs/AAAAPwAAAAAAAAAAAAAAAAAAgD8J9Ru/3fYBvwn1Gz8AAAAAAACAPwAAgL8AAAAAAAAAAAn1G7/d9gG/CfUbPwAAgD8AAIA/AAAAAJqZmb8AAAAACfUbv932Ab8J9Ru/AAAAPwAAAAAAAIC/AAAAAAAAAAAJ9Ru/3fYBvwn1G78AAAAAAACAPwAAAAAAAAAAAACAvwn1G7/d9gG/CfUbvwAAgD8AAIA/AAAAAJqZmb8AAAAACfUbP932Ab8J9Ru/AAAAPwAAAAAAAAAAAAAAAAAAgL8J9Rs/3fYBvwn1G78AAAAAAACAPwAAgD8AAAAAAAAAAAn1Gz/d9gG/CfUbvwAAgD8AAIA/AAABAAIAAwAEAAUABgAHAAgACQAKAAsADAANAA4ADwAQABEAEgATABQAFQAWABcA"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 768,
+      "byteStride": 32
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 768,
+      "byteLength": 48
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 12,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 24,
+      "componentType": 5126,
+      "count": 24,
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5123,
+      "count": 24,
+      "type": "SCALAR"
+    }
+  ]
+}

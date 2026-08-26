@@ -1,0 +1,21 @@
+{
+  "$v": 2,
+  "kind": "app",
+  "appVersion": [0, 2, 0],
+  "runtime": {
+    "kind": "polkavm",
+    "abiVersion": 1,
+    "entrypoint": "app.polkavm"
+  },
+  "capabilities": {
+    "graphics": {
+      "abiVersion": 1,
+      "profile": "tri2d",
+      "requiredFeatures": []
+    },
+    "deviceInput": {
+      "abiVersion": 1,
+      "requiredFeatures": ["pointer", "keyboard"]
+    }
+  }
+}

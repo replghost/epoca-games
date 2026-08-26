@@ -1,0 +1,10 @@
+[package]
+name = "epoca-egui-gpu"
+version = "0.1.0"
+edition = "2021"
+license = "MPL-2.0"
+publish = false
+
+[dependencies]
+egui = { git = "https://github.com/Tobi29/egui.git", rev = "2edcc5b84ee90b54083e9ddb1e19cc67f77fdb94", default-features = false }
+epoca-gpu = { path = "../epoca-gpu" }

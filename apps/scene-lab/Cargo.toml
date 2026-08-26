@@ -1,0 +1,24 @@
+[package]
+name = "epoca-scene-lab"
+version = "0.1.0"
+edition = "2021"
+license = "MPL-2.0"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+egui = { git = "https://github.com/Tobi29/egui.git", rev = "2edcc5b84ee90b54083e9ddb1e19cc67f77fdb94", default-features = false, features = ["default_fonts"] }
+epoca-egui-gpu = { path = "../../crates/epoca-egui-gpu" }
+epoca-gpu = { path = "../../crates/epoca-gpu", features = ["pvm"] }
+epoca-mesh = { path = "../../crates/epoca-mesh" }
+libm = "=0.2.15"
+linked_list_allocator = { version = "=0.10.5", default-features = false }
+polkavm-derive = "=0.31.0"
+
+[profile.release]
+codegen-units = 1
+lto = false
+opt-level = "s"
+panic = "abort"
