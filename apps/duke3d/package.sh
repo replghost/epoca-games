@@ -50,7 +50,7 @@ fi
 GUEST_ELF="$ROOT/.tmp/target/duke3d/$TARGET_NAME/release/duke3d-guest"
 [[ -f "$GUEST_ELF" ]] || fail "Rust build did not produce the expected guest executable: $GUEST_ELF"
 rm -rf "$BUNDLE_DIR"
-mkdir -p "$BUNDLE_DIR/game" "$BUNDLE_DIR/LICENSES"
+mkdir -p "$BUNDLE_DIR/game" "$BUNDLE_DIR/LICENSES" "$BUNDLE_DIR/DISTRIBUTION" "$BUNDLE_DIR/SOURCES"
 polkatool link --min-stack-size 1048576 "$GUEST_ELF" -o "$BUNDLE_DIR/app.polkavm" ||
   fail "polkatool failed to link app.polkavm"
 cp "$DUKE_DIR/manifest.json" "$BUNDLE_DIR/manifest.json"
@@ -60,10 +60,28 @@ cp "$DUKE_DIR/LICENSE" "$BUNDLE_DIR/LICENSES/Duke3D-GPL-2.0-or-later.txt"
 if [[ -n "${DUKE3D_GRP:-}" ]]; then
   cp "$DUKE3D_GRP" "$BUNDLE_DIR/game/duke3d.grp"
 else
-  "$ROOT/content/libresector/package.sh"
-  cp "$ROOT/content/libresector/bundle/duke3d.grp" "$BUNDLE_DIR/game/duke3d.grp"
-  cp "$ROOT/content/libresector/bundle/LICENSE" "$BUNDLE_DIR/LICENSES/LibreSector-CC0-1.0.txt"
-  cp "$ROOT/content/libresector/bundle/generate.py" "$BUNDLE_DIR/LICENSES/LibreSector-source.py"
+  "$ROOT/content/duke3d-shareware/package.sh"
+  python3 - "$ROOT/content/duke3d-shareware/bundle/3dduke13.zip" "$BUNDLE_DIR/game/duke3d.grp" <<'PY'
+import hashlib
+import io
+import sys
+import zipfile
+
+source, output = sys.argv[1:]
+with zipfile.ZipFile(source) as outer:
+    nested_bytes = outer.read("DN3DSW13.SHR")
+with zipfile.ZipFile(io.BytesIO(nested_bytes)) as nested:
+    grp = nested.read("DUKE3D.GRP")
+expected = "f943d0c2e2a0803a644a2107c81ea897dec87596d9dd1a6a432131ad6f5818d6"
+actual = hashlib.sha256(grp).hexdigest()
+if actual != expected:
+    raise SystemExit(f"Duke shareware GRP SHA-256 mismatch: expected {expected}, got {actual}")
+with open(output, "wb") as handle:
+    handle.write(grp)
+PY
+  cp "$ROOT/content/duke3d-shareware/bundle/3dduke13.zip" "$BUNDLE_DIR/DISTRIBUTION/3dduke13.zip"
+  cp "$ROOT/content/duke3d-shareware/bundle/LICENSE.TXT" "$BUNDLE_DIR/LICENSES/Duke3D-shareware-LICENSE.txt"
+  cp "$ROOT/content/duke3d-shareware/bundle/SOURCES.json" "$BUNDLE_DIR/SOURCES/Duke3D-shareware.json"
 fi
 
 printf 'Built %s\n' "$BUNDLE_DIR"

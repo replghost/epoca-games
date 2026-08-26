@@ -10,13 +10,13 @@ The repository is host-neutral. Artifacts are packaged once and are consumed unc
 | ------------------- | --------------- | ---------------- | -------------------------------------------------- |
 | `doom`              | `framebuffer`   | GPL-2.0          | Freedoom Phase 1, BSD-3-Clause                     |
 | `quake`             | `framebuffer`   | GPL-2.0-or-later | LibreQuake Lite, BSD-3-Clause and GPL-2.0-or-later |
-| `duke3d`            | `framebuffer`   | GPL-2.0-or-later | LibreSector, CC0-1.0                               |
+| `duke3d`            | `framebuffer`   | GPL-2.0-or-later | Duke Nukem 3D v1.3d shareware                      |
 | `nes`               | `framebuffer`   | GPL-2.0          | Reproducible controller-test ROM, MIT              |
 | `egui-kitchen-sink` | `tri2d`         | MPL-2.0          | None                                               |
 | `gpu-cube`          | `webgpu-raster` | MPL-2.0          | None                                               |
 | `scene-lab`         | `webgpu-raster` | MPL-2.0          | Reproducible glTF-derived mesh                     |
 
-A sample is included only when its executable source and every default asset are reproducible and legally redistributable. Commercial Doom IWADs and Duke Nukem 3D GRP files are never committed. Quake uses the same PolkaPorts engine revision deployed at `epocaquake.paseo`, rebuilt from source and packaged with the pinned LibreQuake Lite release.
+A sample is included only when its executable source and every default asset are reproducible and legally redistributable. Retail Doom IWADs and Duke Nukem 3D GRP files are never committed. Quake uses the same PolkaPorts engine revision deployed at `epocaquake.paseo`, rebuilt from source and packaged with the pinned LibreQuake Lite release.
 
 ## Layout
 
@@ -65,7 +65,7 @@ Build the separately distributable Duke Nukem 3D v1.3d shareware content package
 ./content/duke3d-shareware/package.sh
 ```
 
-That package downloads and verifies the original `3dduke13.zip`, then republishes the archive unchanged with its shareware license. The Duke application continues to use LibreSector by default because publishing only an extracted `DUKE3D.GRP` would violate the shareware distribution conditions.
+That package downloads and verifies the original `3dduke13.zip`, then republishes the archive unchanged with its shareware license. The Duke application uses the shareware episode by default: its CAR retains the complete unchanged distribution and exposes a separately validated `DUKE3D.GRP` runtime view.
 
 Generated release metadata under `dist/<app>.release.json` records the CID, App version, manifest SHA-256, and CAR SHA-256.
 
@@ -77,7 +77,7 @@ Generated release metadata under `dist/<app>.release.json` records the CID, App 
 - exactly one supported graphics profile
 - no legacy `$schema`, `modalities`, or `contentSlots`
 - deployment config imports the manifest as its only executable version source
-- commercial game data is not a committed dependency
+- retail game data is not a committed dependency
 
 `npm run verify` reopens every generated CAR and enforces:
 
@@ -89,7 +89,7 @@ Generated release metadata under `dist/<app>.release.json` records the CID, App 
 - required asset licenses and attribution
 - Host compatibility expectations
 
-The Doom, Quake, and Duke framebuffer samples launch in both Epoca and Dotli. NES launches in Dotli; Epoca's current native compiler traps during NES initialization, and `dist/compatibility.json` records that observed host boundary. Tri2D and WebGPU Raster samples launch in Epoca; Dotli must skip them as unsupported profiles until it implements those contracts, never substitute framebuffer.
+The Doom and Quake framebuffer samples launch in both Epoca and Dotli. Duke with the attached v1.3d shareware episode launches in Epoca; Dotli renders its initial frames and then reaches the host's bounded asset-read hostcall budget, which `dist/compatibility.json` records rather than claiming full launch support. NES launches in Dotli; Epoca's current native compiler traps during NES initialization. Tri2D and WebGPU Raster samples launch in Epoca; Dotli must skip them as unsupported profiles until it implements those contracts, never substitute framebuffer.
 
 Run the native Epoca process-host smoke matrix against every supported profile:
 

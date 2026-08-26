@@ -57,7 +57,12 @@ for (const app of apps) {
     profile,
     hosts: {
       epoca: app === "nes" ? "known-init-trap" : "launch",
-      dotli: profile === "framebuffer" ? "launch" : "skip-unsupported-profile",
+      dotli:
+        app === "duke3d"
+          ? "known-hostcall-budget"
+          : profile === "framebuffer"
+            ? "launch"
+            : "skip-unsupported-profile",
     },
   });
   console.log(`${app}: verified ${files.size} files (${profile})`);
@@ -148,8 +153,10 @@ function verifyLicensing(app, files) {
     ],
     duke3d: [
       "game/duke3d.grp",
+      "DISTRIBUTION/3dduke13.zip",
       "LICENSES/Duke3D-GPL-2.0-or-later.txt",
-      "LICENSES/LibreSector-CC0-1.0.txt",
+      "LICENSES/Duke3D-shareware-LICENSE.txt",
+      "SOURCES/Duke3D-shareware.json",
     ],
     nes: [
       "game/cartridge.nes",
