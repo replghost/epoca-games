@@ -1,6 +1,7 @@
 {
   "environment": "paseo-next-v2",
   "deployedAt": "2026-08-27T00:32:15Z",
+  "lastUpdatedAt": "2026-08-27T02:36:04Z",
   "owner": {
     "ss58": "5HEmUSABdWGLfqkcURxmR5wZ6Qc777x4oYoqFvXTJUkLuZzG",
     "h160": "0xfd840f56c2cbdd4a7446a38d67fe09fddd36544d"
@@ -34,11 +35,11 @@
     {
       "app": "duke3d",
       "domain": "duke.paseo",
-      "appVersion": [0, 2, 1],
-      "localCarRoot": "bafybeidlwizaelsseduxmz5q4dbtqjsz5vxvioe222r3uf7nnjijjnfxmi",
-      "storageCid": "bafybeigvzacntkrlilfsesagguqldt767hcbggh2uyevx6qtynuxpc7pxm",
-      "contenthashTx": "0x68580b64e9d65a3fecec0e1769506744c7b8b38f46f6ca753ec08db5313d7694",
-      "executableRecordTx": "0x367925b024046dc54f765f9f274f191c5b7ff81355803dcf4debd3d28d35bf6b"
+      "appVersion": [0, 2, 2],
+      "localCarRoot": "bafybeidq6n5qmidkghfhdto3qjxpklvni2hawaohuesyqoi375fmjx4hoe",
+      "storageCid": "bafybeieu7otdhe66keqqxuhfqpygmgeunrpb3tqzbyashuellkhqnu6jfi",
+      "contenthashTx": "0xd580e93816755cd73b36baaac05b6a9beaea1a6721060c355b8bb69054d072fc",
+      "executableRecordTx": "0xe08c5241870afc662b1c425b662ddd179548d0fc47d1c4fe9e30044e231af18e"
     },
     {
       "app": "nes",
