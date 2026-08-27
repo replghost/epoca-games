@@ -5,7 +5,16 @@ const root = resolve(import.meta.dirname, "..");
 const dotli = process.env.DOTLI_REPO;
 if (!dotli) throw new Error("DOTLI_REPO must point to a Dotli checkout");
 const host = resolve(dotli, "apps", "host");
-for (const app of ["doom", "quake", "nes"]) {
+const apps = new Map([
+  ["doom", "framebuffer"],
+  ["quake", "framebuffer"],
+  ["duke3d", "framebuffer"],
+  ["nes", "framebuffer"],
+  ["egui-kitchen-sink", "tri2d"],
+  ["gpu-cube", "webgpu-raster"],
+  ["scene-lab", "webgpu-raster"],
+]);
+for (const [app, profile] of apps) {
   await run(
     "bunx",
     [
@@ -27,13 +36,13 @@ for (const app of ["doom", "quake", "nes"]) {
         "bundle",
         "manifest.json",
       ),
+      DOTLI_PVM_EXPECTED_BACKEND: "compiler",
+      DOTLI_PVM_EXPECTED_PROFILE: profile,
+      ...(profile === "webgpu-raster" ? { DOTLI_WEBGPU: "1" } : {}),
     },
   );
-  console.log(`${app}: Dotli framebuffer smoke passed`);
+  console.log(`${app}: Dotli ${profile} smoke passed`);
 }
-console.log(
-  "duke3d: skipped (shareware renders initial frames, then exceeds Dotli's bounded asset-read hostcall budget)",
-);
 
 function run(command, args, cwd, env) {
   return new Promise((resolveRun, reject) => {

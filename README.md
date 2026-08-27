@@ -89,7 +89,7 @@ Generated release metadata under `dist/<app>.release.json` records the CID, App 
 - required asset licenses and attribution
 - Host compatibility expectations
 
-The Doom and Quake framebuffer samples launch in both Epoca and Dotli. Duke with the attached v1.3d shareware episode launches in Epoca; Dotli renders its initial frames and then reaches the host's bounded asset-read hostcall budget, which `dist/compatibility.json` records rather than claiming full launch support. NES launches in Dotli; Epoca's current native compiler traps during NES initialization. Tri2D and WebGPU Raster samples launch in Epoca; Dotli must skip them as unsupported profiles until it implements those contracts, never substitute framebuffer.
+All seven samples launch in Dotli: Doom, Quake, Duke shareware, and NES use framebuffer; egui uses Tri2D; GPU cube and SceneLab use WebGPU Raster. NES remains the one observed Epoca boundary because its current native compiler traps during initialization.
 
 Run the native Epoca process-host smoke matrix against every supported profile:
 

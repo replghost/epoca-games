@@ -57,12 +57,7 @@ for (const app of apps) {
     profile,
     hosts: {
       epoca: app === "nes" ? "known-init-trap" : "launch",
-      dotli:
-        app === "duke3d"
-          ? "known-hostcall-budget"
-          : profile === "framebuffer"
-            ? "launch"
-            : "skip-unsupported-profile",
+      dotli: "launch",
     },
   });
   console.log(`${app}: verified ${files.size} files (${profile})`);
