@@ -109,6 +109,10 @@ DOTLI_REPO=/absolute/path/to/dotli npm run smoke:dotli
 
 Publishing is manual. Build and verify first, then use the app's `bulletin-deploy.config.mjs` with a Bulletin Deploy release that supports App manifest v2. CI does not hold deployment credentials or mutate DotNS.
 
+The verified Paseo Next v2 deployments are `doom.paseo`, `quake.paseo`, `duke.paseo`, `nes.paseo`, `egui.paseo`, `gpu.paseo`, and `scene-lab.paseo`. Their storage CIDs and final transaction hashes are pinned in `deployments/paseo-next-v2.json`.
+
+DotNS keeps its `$v: 1` root discovery envelope for display metadata. Every `app.<name>.paseo` `executable` text record contains the exact strict `$v: 2`, `kind: "app"` manifest from this repository.
+
 ## Licensing
 
 See `LICENSE`, each app or content directory, and the notices embedded into generated bundles. User-supplied retail data may be used for local testing through the documented environment overrides but must not be published by these sample workflows.

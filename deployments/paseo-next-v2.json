@@ -1,0 +1,80 @@
+{
+  "environment": "paseo-next-v2",
+  "deployedAt": "2026-08-27T00:32:15Z",
+  "owner": {
+    "ss58": "5HEmUSABdWGLfqkcURxmR5wZ6Qc777x4oYoqFvXTJUkLuZzG",
+    "h160": "0xfd840f56c2cbdd4a7446a38d67fe09fddd36544d"
+  },
+  "deployer": {
+    "repository": "https://github.com/paritytech/bulletin-deploy",
+    "commit": "f15b9b0",
+    "version": "0.16.0-rc.1",
+    "rootManifestVersion": 1,
+    "executableManifestVersion": 2
+  },
+  "apps": [
+    {
+      "app": "doom",
+      "domain": "doom.paseo",
+      "appVersion": [0, 1, 7],
+      "localCarRoot": "bafybeif3zsjhk325v3ct7hrjj3n2mak3dvl7ukivzbver4kljpu3uupjie",
+      "storageCid": "bafybeibuyv6z7wfh32sfrggxdptj57suztxpixb737ba4ocdbdlwvc4stm",
+      "contenthashTx": "0x86cdf49ee34d83d0417c72e1660c775f196bd5afc5b3fc9e1ca64708eb472029",
+      "executableRecordTx": "0xc5760b0ce9ead3f4312d0a8e2d75ac1f47ff9ac63e55ebb2f7f047b607aa603e"
+    },
+    {
+      "app": "quake",
+      "domain": "quake.paseo",
+      "appVersion": [0, 2, 0],
+      "localCarRoot": "bafybeiha4jr222i4g562irhgrfznxtesmv63jpjgwcourv2lgcj5y6v2sm",
+      "storageCid": "bafybeidl24stfy5kznpu63kqrvl5rcw5owbmq3gbzptc7663fotj5ezhsu",
+      "contenthashTx": "0x8b326ea33c9e1c2b1b050dc94734b07e26baff99f2475fc1bf790e85407a7a17",
+      "executableRecordTx": "0xfc102566e0d94c96344052ef8b5051951d8802c5b388643569528be75fc83231"
+    },
+    {
+      "app": "duke3d",
+      "domain": "duke.paseo",
+      "appVersion": [0, 2, 1],
+      "localCarRoot": "bafybeidlwizaelsseduxmz5q4dbtqjsz5vxvioe222r3uf7nnjijjnfxmi",
+      "storageCid": "bafybeigvzacntkrlilfsesagguqldt767hcbggh2uyevx6qtynuxpc7pxm",
+      "contenthashTx": "0x68580b64e9d65a3fecec0e1769506744c7b8b38f46f6ca753ec08db5313d7694",
+      "executableRecordTx": "0x367925b024046dc54f765f9f274f191c5b7ff81355803dcf4debd3d28d35bf6b"
+    },
+    {
+      "app": "nes",
+      "domain": "nes.paseo",
+      "appVersion": [0, 2, 0],
+      "localCarRoot": "bafybeie544oqnegr2cdqztzouc2um5lepqeghzdfypkzvc72bgdgyiqph4",
+      "storageCid": "bafybeihc7fzcepdroy6nzu2gthwonkdpb6o2hjz5klcbkp2msqxtstnpbu",
+      "contenthashTx": "0x2de4824c19925b798632459ee8d6e8515689e80de48be64e512d6b82aacc8bc5",
+      "executableRecordTx": "0x5af14d20468c339a1ff63a1384a7580c997f843dd33eca85234be41fe528ed3e"
+    },
+    {
+      "app": "egui-kitchen-sink",
+      "domain": "egui.paseo",
+      "appVersion": [0, 2, 0],
+      "localCarRoot": "bafybeia5cqcqumxzcfmtfrwhrqsigsnhdzibnpnzxifqmwirzidha2dwxa",
+      "storageCid": "bafybeicsiyl7rcxqemysrcoad3kqsjb5nj66hune6cukbet73apwahf7ra",
+      "contenthashTx": "0x6c9d9401bcaf27f99d3b113bc3e6ab5f9381898c65533fa96c4bc319892f1adb",
+      "executableRecordTx": "0xa0030c4431c917b6d6f20b204ec93cd0ad1736be1b90f03251f351f781635e90"
+    },
+    {
+      "app": "gpu-cube",
+      "domain": "gpu.paseo",
+      "appVersion": [0, 1, 0],
+      "localCarRoot": "bafybeihu6lxc56zsiu66amevlm6vhxjpk7fvqzpwij2lka3rqabdszrmrq",
+      "storageCid": "bafybeic7fcinznfup2o675shutrbt55r3uegqfodle7haren3ka73nkpem",
+      "contenthashTx": "0x00d2d1a13dcb7b50026bffe649dedd49db842c1571ae465408b8f1c98ebbc57c",
+      "executableRecordTx": "0x3029115e6b916ccfb3bf5df2496147ee2d622ad7e0ce37ae0782f00f869129b1"
+    },
+    {
+      "app": "scene-lab",
+      "domain": "scene-lab.paseo",
+      "appVersion": [0, 1, 0],
+      "localCarRoot": "bafybeiayvvfncdulbmr2wk6x7ij6e7t345pbt45vvplxa72tw4tk5ixhyq",
+      "storageCid": "bafybeibea7bqrs6zwj7t6m42j2xgotkz3z4wgkourh5bxnk664jn7ce3ry",
+      "contenthashTx": "0x7f96a6dd5c81eb0e2d616f805046099be710f8a5f02657f74900a5c999390004",
+      "executableRecordTx": "0x7ddc118b7c344840ab717278ff2a16c81bb7268a27f0806cb4845f39707312a4"
+    }
+  ]
+}
