@@ -8,6 +8,8 @@ use alloc::vec::Vec;
 #[global_allocator]
 static ALLOCATOR: polkavm_derive::LeakingAllocator = polkavm_derive::LeakingAllocator;
 
+polkavm_derive::min_stack_size!(64 * 1024);
+
 const CARTRIDGE_PATH: &[u8] = b"game/cartridge.nes";
 const SAVE_PATH: &[u8] = b"save/cartridge.sav";
 const MAX_ROM_BYTES: usize = 8 * 1024 * 1024;

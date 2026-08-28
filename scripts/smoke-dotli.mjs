@@ -38,6 +38,7 @@ for (const [app, profile] of apps) {
       ),
       DOTLI_PVM_EXPECTED_BACKEND: "compiler",
       DOTLI_PVM_EXPECTED_PROFILE: profile,
+      DOTLI_PVM_INPUT_KEYS: app === "duke3d" ? "Enter" : "ArrowUp,Space",
       ...(profile === "webgpu-raster" ? { DOTLI_WEBGPU: "1" } : {}),
     },
   );

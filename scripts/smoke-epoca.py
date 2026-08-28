@@ -26,9 +26,6 @@ def main():
         profile = APPS.get(app)
         if profile is None:
             raise SystemExit(f"unknown app: {app}")
-        if app == "nes":
-            print("nes: skipped (known Epoca native compiler init trap; Dotli smoke passes)")
-            continue
         bundle = ROOT / "apps" / app / "bundle"
         command = [HOST, "serve", profile, str(bundle / "app.polkavm"), str(bundle)]
         child = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
