@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import os
 import select
 import struct
@@ -11,15 +12,11 @@ HOST = os.environ.get("EPOCA_PVM_HOST")
 if not HOST:
     raise SystemExit("EPOCA_PVM_HOST must point to the epoca-pvm-host binary")
 
-APPS = {
-    "doom": "framebuffer",
-    "quake": "framebuffer",
-    "duke3d": "framebuffer",
-    "nes": "framebuffer",
-    "egui-kitchen-sink": "tri2d",
-    "gpu-cube": "webgpu-raster",
-    "scene-lab": "webgpu-raster",
-}
+MATRIX = json.loads((ROOT / "conformance" / "matrix.json").read_text())
+if MATRIX.get("$v") != 1 or not isinstance(MATRIX.get("apps"), list):
+    raise SystemExit("invalid conformance matrix")
+APPS = {app["id"]: app["profile"] for app in MATRIX["apps"]}
+
 def main():
     selected = sys.argv[1:] or list(APPS)
     for app in selected:

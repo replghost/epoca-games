@@ -51,7 +51,10 @@ for (const [app, profile] of Object.entries(expected)) {
     assert.equal(config.executables[0].kind, "app");
     assert.equal(config.executables[0].path, "./bundle");
     assert.equal(config.executables[0].manifest.$v, 2);
-    assert.equal("appVersion" in config.executables[0], false);
+    assert.deepEqual(
+      config.executables[0].appVersion,
+      config.executables[0].manifest.appVersion,
+    );
   });
 }
 

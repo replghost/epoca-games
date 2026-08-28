@@ -6,5 +6,5 @@ export default {
   description:
     "A PolkaVM egui demonstration rendered through the bounded Tri2D profile.",
   icon: { path: "./icon.png", format: "png" },
-  executables: [{ kind: "app", path: "./bundle", manifest }],
+  executables: [{ kind: "app", path: "./bundle", appVersion: manifest.appVersion, manifest }],
 };

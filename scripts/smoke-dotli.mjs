@@ -1,20 +1,16 @@
 import { spawn } from "node:child_process";
 import { resolve } from "node:path";
 
-const root = resolve(import.meta.dirname, "..");
+import {
+  conformanceAppPaths,
+  loadConformanceMatrix,
+} from "./conformance.mjs";
 const dotli = process.env.DOTLI_REPO;
 if (!dotli) throw new Error("DOTLI_REPO must point to a Dotli checkout");
 const host = resolve(dotli, "apps", "host");
-const apps = new Map([
-  ["doom", "framebuffer"],
-  ["quake", "framebuffer"],
-  ["duke3d", "framebuffer"],
-  ["nes", "framebuffer"],
-  ["egui-kitchen-sink", "tri2d"],
-  ["gpu-cube", "webgpu-raster"],
-  ["scene-lab", "webgpu-raster"],
-]);
-for (const [app, profile] of apps) {
+const apps = await loadConformanceMatrix();
+for (const app of apps) {
+  const paths = conformanceAppPaths(app.id);
   await run(
     "bunx",
     [
@@ -28,21 +24,15 @@ for (const [app, profile] of apps) {
     host,
     {
       ...process.env,
-      DOTLI_DOOM_V2_CAR: resolve(root, "dist", `${app}.car`),
-      DOTLI_DOOM_V2_MANIFEST: resolve(
-        root,
-        "apps",
-        app,
-        "bundle",
-        "manifest.json",
-      ),
+      DOTLI_DOOM_V2_CAR: paths.car,
+      DOTLI_DOOM_V2_MANIFEST: paths.manifest,
       DOTLI_PVM_EXPECTED_BACKEND: "compiler",
-      DOTLI_PVM_EXPECTED_PROFILE: profile,
-      DOTLI_PVM_INPUT_KEYS: app === "duke3d" ? "Enter" : "ArrowUp,Space",
-      ...(profile === "webgpu-raster" ? { DOTLI_WEBGPU: "1" } : {}),
+      DOTLI_PVM_EXPECTED_PROFILE: app.profile,
+      DOTLI_PVM_INPUT_KEYS: app.inputKeys.join(","),
+      ...(app.profile === "webgpu-raster" ? { DOTLI_WEBGPU: "1" } : {}),
     },
   );
-  console.log(`${app}: Dotli ${profile} smoke passed`);
+  console.log(`${app.id}: Dotli ${app.profile} smoke passed`);
 }
 
 function run(command, args, cwd, env) {

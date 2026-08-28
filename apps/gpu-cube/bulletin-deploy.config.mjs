@@ -5,5 +5,5 @@ export default {
   displayName: "PolkaVM GPU Cube",
   description: "A bounded WebGPU Raster sample running as a PolkaVM App.",
   icon: { path: "./icon.png", format: "png" },
-  executables: [{ kind: "app", path: "./bundle", manifest }],
+  executables: [{ kind: "app", path: "./bundle", appVersion: manifest.appVersion, manifest }],
 };

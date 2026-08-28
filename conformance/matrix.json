@@ -1,0 +1,40 @@
+{
+  "$v": 1,
+  "apps": [
+    {
+      "id": "doom",
+      "profile": "framebuffer",
+      "inputKeys": ["ArrowUp", "Space"]
+    },
+    {
+      "id": "quake",
+      "profile": "framebuffer",
+      "inputKeys": ["ArrowUp", "Space"]
+    },
+    {
+      "id": "duke3d",
+      "profile": "framebuffer",
+      "inputKeys": ["Enter"]
+    },
+    {
+      "id": "nes",
+      "profile": "framebuffer",
+      "inputKeys": ["ArrowUp", "Space"]
+    },
+    {
+      "id": "egui-kitchen-sink",
+      "profile": "tri2d",
+      "inputKeys": ["Tab", "Enter"]
+    },
+    {
+      "id": "gpu-cube",
+      "profile": "webgpu-raster",
+      "inputKeys": ["ArrowUp", "Space"]
+    },
+    {
+      "id": "scene-lab",
+      "profile": "webgpu-raster",
+      "inputKeys": ["ArrowUp", "Space"]
+    }
+  ]
+}
