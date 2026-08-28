@@ -6,5 +6,12 @@ export default {
   description:
     "A sandboxed FCEUmm PolkaVM app with a reproducible MIT test cartridge.",
   icon: { path: "./icon.png", format: "png" },
-  executables: [{ kind: "app", path: "./bundle", manifest }],
+  executables: [
+    {
+      kind: "app",
+      path: "./bundle",
+      appVersion: manifest.appVersion,
+      manifest,
+    },
+  ],
 };
