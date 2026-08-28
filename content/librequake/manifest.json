@@ -1,0 +1,28 @@
+{
+  "$schema": "epoca:experimental-product/v1",
+  "$v": 1,
+  "kind": "content",
+  "contentVersion": [0, 9, 0],
+  "items": [
+    {
+      "id": "pak0",
+      "type": "application/x-quake-pak",
+      "traits": ["game", "quake-pak"],
+      "entry": "pak0.pak",
+      "license": "BSD-3-Clause AND GPL-2.0-or-later",
+      "integrity": {
+        "sha256": "0dd895a425e75d9908025dcfe340f75f5b8166ada68b2d7ee54d8d91d29378ff"
+      }
+    },
+    {
+      "id": "pak1",
+      "type": "application/x-quake-pak",
+      "traits": ["game", "quake-pak"],
+      "entry": "pak1.pak",
+      "license": "BSD-3-Clause AND GPL-2.0-or-later",
+      "integrity": {
+        "sha256": "28423c01836341d9e3c6465b407a44ae94e4e29e954544a67739686850e39365"
+      }
+    }
+  ]
+}

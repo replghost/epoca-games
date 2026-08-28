@@ -1,5 +1,20 @@
-Each subdirectory in this repository carries its own license
-matching the upstream project it was ported from.
+Each application, content package, and shared crate in this repository carries
+the license of its source project. The root repository does not relicense those
+components.
 
-doom/ — GNU General Public License v2.0 (GPL-2.0)
-         See https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+Applications:
+- apps/doom: GPL-2.0; see apps/doom/LICENSE.
+- apps/quake: GPL-2.0-or-later; see apps/quake/LICENSE.
+- apps/duke3d: GPL-2.0-or-later; see apps/duke3d/LICENSE.
+- apps/nes: GPL-2.0 through the pinned FCEUmm source; see its vendor Copying file.
+- apps/egui-kitchen-sink, apps/gpu-cube, apps/scene-lab: MPL-2.0.
+
+Content:
+- content/freedoom: BSD-3-Clause; the official package supplies COPYING and credits.
+- content/librequake: BSD-3-Clause and GPL-2.0-or-later; the pinned release supplies COPYING, license details, and credits.
+- content/libresector: CC0-1.0; see content/libresector/LICENSE.
+- content/nes-controller-test: MIT; see content/nes-controller-test/LICENSE.
+- content/duke3d-shareware: governed by the unmodified shareware archive's LICENSE.TXT; no archive is committed.
+
+Shared runtime contracts and PolkaVM-derived artifacts retain their upstream
+MPL-2.0, MIT, and Apache-2.0 notices under licenses/ and in generated bundles.

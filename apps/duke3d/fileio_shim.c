@@ -1,0 +1,309 @@
+/*
+ * fileio_shim.c — File I/O backed by host_asset_read for PolkaVM sandbox.
+ *
+ * Provides fopen/fclose/fread/fwrite/fseek/ftell/feof and the w_file WAD
+ * interface. All file access goes through the host's asset store.
+ *
+ * Files remain in host-owned storage. fread/fseek/ftell issue bounded
+ * offset reads instead of copying an entire WAD into guest memory.
+ */
+
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdio.h>
+
+/* Host imports (linked via Rust #[no_mangle] wrappers) */
+extern uint32_t host_asset_read_wrapper(uint32_t name_ptr, uint32_t name_len,
+                                        uint32_t offset, uint32_t dst_ptr, uint32_t max_len);
+
+/* libc shim functions we provide */
+extern void *malloc(size_t);
+
+/* ── Concrete definition of FILE (declared as struct _FILE in stdio.h) ── */
+
+#define MAX_OPEN_FILES 16
+#define MAX_FILE_SIZE (64 * 1024 * 1024)
+#define FILE_READ_CACHE_BYTES (16 * 1024)
+
+struct _FILE {
+    int in_use;
+    size_t size;
+    size_t pos;
+    int eof_flag;
+    char asset_name[64]; /* cached asset name for reuse */
+    size_t cache_offset;
+    size_t cache_length;
+    uint8_t read_cache[FILE_READ_CACHE_BYTES];
+};
+
+static struct _FILE file_table[MAX_OPEN_FILES];
+
+/* Asset metadata is independent from descriptor slots so concurrent opens of
+ * the same host asset never repeat the bounded size probe. */
+#define MAX_ASSET_METADATA 8
+struct asset_metadata {
+    size_t size;
+    char name[64];
+};
+static struct asset_metadata asset_metadata[MAX_ASSET_METADATA];
+
+static struct asset_metadata *find_metadata(const char *name) {
+    for (int i = 0; i < MAX_ASSET_METADATA; ++i) {
+        if (asset_metadata[i].name[0] != '\0'
+            && strcmp(asset_metadata[i].name, name) == 0) {
+            return &asset_metadata[i];
+        }
+    }
+    return NULL;
+}
+
+static int cache_metadata(const char *name, size_t size) {
+    for (int i = 0; i < MAX_ASSET_METADATA; ++i) {
+        if (asset_metadata[i].name[0] == '\0') {
+            asset_metadata[i].size = size;
+            strncpy(asset_metadata[i].name, name,
+                    sizeof(asset_metadata[i].name) - 1);
+            asset_metadata[i].name[sizeof(asset_metadata[i].name) - 1] = '\0';
+            return 1;
+        }
+    }
+    return 0;
+}
+
+FILE *fopen(const char *path, const char *mode) {
+    (void)mode; /* We only support reading. */
+
+    /* Reject NULL or empty paths immediately. */
+    if (!path || path[0] == '\0') return NULL;
+
+    /* Asset names are host-mounted paths (for example game/doom.wad). */
+    const char *name = path;
+    if (strcasecmp(name, "duke3d.grp") == 0) {
+        name = "game/duke3d.grp";
+    }
+    size_t name_len = strlen(name);
+    if (name_len == 0) return NULL;
+
+    struct asset_metadata *metadata = find_metadata(name);
+    size_t file_size;
+    if (metadata) {
+        file_size = metadata->size;
+    } else {
+        /* Check if asset exists. */
+        uint8_t probe;
+        uint32_t got = host_asset_read_wrapper(
+            (uint32_t)(uintptr_t)name, (uint32_t)name_len,
+            0, (uint32_t)(uintptr_t)&probe, 1);
+        if (got == 0) {
+            printf("fopen: asset not found: %s\n", name);
+            return NULL;
+        }
+
+        /* Binary-search the size once, then retain it independently of open
+         * descriptors. The host owns the bytes; only metadata is cached. */
+        size_t lo = 1, hi = MAX_FILE_SIZE;
+        while (lo < hi) {
+            size_t mid = lo + (hi - lo + 1) / 2;
+            got = host_asset_read_wrapper(
+                (uint32_t)(uintptr_t)name, (uint32_t)name_len,
+                (uint32_t)(mid - 1), (uint32_t)(uintptr_t)&probe, 1);
+            if (got > 0) lo = mid;
+            else hi = mid - 1;
+        }
+        file_size = lo;
+        if (!cache_metadata(name, file_size)) {
+            printf("fopen: asset metadata cache full\n");
+            return NULL;
+        }
+    }
+
+    /* Keep asset bytes host-owned. Large GRPs otherwise consume nearly all
+     * of the PolkaVM guest's data address space before Duke starts. */
+    struct _FILE *slot = NULL;
+    for (int i = 0; i < MAX_OPEN_FILES; i++) {
+        if (!file_table[i].in_use) {
+            if (slot == NULL) {
+                slot = &file_table[i];
+            }
+            if (file_table[i].asset_name[0] == '\0') {
+                slot = &file_table[i];
+                break;
+            }
+        }
+    }
+    if (slot == NULL) {
+        printf("fopen: too many open files\n");
+        return NULL;
+    }
+
+    slot->in_use = 1;
+    slot->size = file_size;
+    slot->pos = 0;
+    slot->eof_flag = 0;
+    slot->cache_offset = 0;
+    slot->cache_length = 0;
+    strncpy(slot->asset_name, name, sizeof(slot->asset_name) - 1);
+    slot->asset_name[sizeof(slot->asset_name) - 1] = '\0';
+    printf("fopen: %s (%u bytes)\n", name, (unsigned)file_size);
+    return slot;
+}
+
+int fclose(FILE *f) {
+    if (!f || !f->in_use) return -1;
+    f->in_use = 0;
+    f->pos = 0;
+    f->eof_flag = 0;
+    return 0;
+}
+
+size_t fread(void *ptr, size_t elem_size, size_t count, FILE *f) {
+    if (!f || !f->in_use || elem_size == 0 || count == 0) return 0;
+    if (count > SIZE_MAX / elem_size) return 0;
+
+    size_t total = elem_size * count;
+    size_t avail = (f->pos < f->size) ? f->size - f->pos : 0;
+    if (total > avail) {
+        total = avail;
+        f->eof_flag = 1;
+    }
+
+    uint8_t *output = (uint8_t *)ptr;
+    size_t copied = 0;
+    const uint32_t name_len = (uint32_t)strlen(f->asset_name);
+    while (copied < total) {
+        if (f->cache_length > 0
+            && f->pos >= f->cache_offset
+            && f->pos - f->cache_offset < f->cache_length) {
+            size_t cache_pos = f->pos - f->cache_offset;
+            size_t chunk = f->cache_length - cache_pos;
+            if (chunk > total - copied) chunk = total - copied;
+            memcpy(output + copied, f->read_cache + cache_pos, chunk);
+            copied += chunk;
+            f->pos += chunk;
+            continue;
+        }
+
+        size_t remaining = total - copied;
+        if (remaining >= FILE_READ_CACHE_BYTES) {
+            uint32_t got = host_asset_read_wrapper(
+                (uint32_t)(uintptr_t)f->asset_name, name_len,
+                (uint32_t)f->pos, (uint32_t)(uintptr_t)(output + copied),
+                (uint32_t)remaining);
+            copied += got;
+            f->pos += got;
+            if ((size_t)got < remaining) break;
+            continue;
+        }
+
+        uint32_t got = host_asset_read_wrapper(
+            (uint32_t)(uintptr_t)f->asset_name, name_len,
+            (uint32_t)f->pos, (uint32_t)(uintptr_t)f->read_cache,
+            FILE_READ_CACHE_BYTES);
+        if (got == 0) break;
+        f->cache_offset = f->pos;
+        f->cache_length = got;
+    }
+    if (copied < total) f->eof_flag = 1;
+    return copied / elem_size;
+}
+
+size_t fwrite(const void *ptr, size_t size, size_t count, FILE *f) {
+    (void)ptr; (void)size; (void)count; (void)f;
+    return 0; /* Read-only filesystem. */
+}
+
+int fseek(FILE *f, long offset, int whence) {
+    if (!f || !f->in_use) return -1;
+    long new_pos;
+    switch (whence) {
+        case SEEK_SET: new_pos = offset; break;
+        case SEEK_CUR: new_pos = (long)f->pos + offset; break;
+        case SEEK_END: new_pos = (long)f->size + offset; break;
+        default: return -1;
+    }
+    if (new_pos < 0) new_pos = 0;
+    if ((size_t)new_pos > f->size) new_pos = (long)f->size;
+    f->pos = (size_t)new_pos;
+    f->eof_flag = 0;
+    return 0;
+}
+
+long ftell(FILE *f) {
+    if (!f || !f->in_use) return -1;
+    return (long)f->pos;
+}
+
+int feof(FILE *f) {
+    if (!f || !f->in_use) return 1;
+    return f->eof_flag;
+}
+
+int ferror(FILE *f) {
+    return !f || !f->in_use;
+}
+
+char *fgets(char *buf, int n, FILE *f) {
+    if (!f || !f->in_use || n <= 0) return NULL;
+    int i = 0;
+    while (i < n - 1) {
+        char c;
+        if (fread(&c, 1, 1, f) != 1) break;
+        buf[i++] = c;
+        if (c == '\n') break;
+    }
+    if (i == 0) { f->eof_flag = 1; return NULL; }
+    buf[i] = '\0';
+    return buf;
+}
+
+/* ── Minimal descriptor API used by the BUILD filesystem ───────── */
+
+static FILE *fd_table[MAX_OPEN_FILES];
+
+int open(const char *path, int flags, ...) {
+    (void)flags;
+    FILE *file = fopen(path, "rb");
+    if (!file) return -1;
+    for (int fd = 1; fd < MAX_OPEN_FILES; ++fd) {
+        if (!fd_table[fd]) {
+            fd_table[fd] = file;
+            return fd;
+        }
+    }
+    fclose(file);
+    return -1;
+}
+
+int close(int fd) {
+    if (fd < 0 || fd >= MAX_OPEN_FILES || !fd_table[fd]) return -1;
+    int result = fclose(fd_table[fd]);
+    fd_table[fd] = NULL;
+    return result;
+}
+
+int read(int fd, void *buf, size_t count) {
+    if (fd < 0 || fd >= MAX_OPEN_FILES || !fd_table[fd]) return -1;
+    return (int)fread(buf, 1, count, fd_table[fd]);
+}
+
+long lseek(int fd, long offset, int whence) {
+    if (fd < 0 || fd >= MAX_OPEN_FILES || !fd_table[fd]) return -1;
+    if (fseek(fd_table[fd], offset, whence) != 0) return -1;
+    return ftell(fd_table[fd]);
+}
+
+
+int write(int fd, const void *buf, size_t count) {
+    (void)fd;
+    (void)buf;
+    (void)count;
+    return -1;
+}
+
+int remove(const char *path) { (void)path; return -1; }
+int unlink(const char *path) { (void)path; return -1; }
+int rename(const char *old, const char *new_name) { (void)old; (void)new_name; return -1; }
+int access(const char *path, int mode) { (void)path; (void)mode; return -1; }
+int mkdir(const char *path, unsigned int mode) { (void)path; (void)mode; return -1; }
+int stat(const char *path, void *buf) { (void)path; (void)buf; return -1; }

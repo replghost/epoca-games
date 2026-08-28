@@ -1,0 +1,14 @@
+{
+  "upstream": {
+    "repository": "https://github.com/lavenderdotpet/LibreQuake",
+    "release": "v0.09-beta",
+    "artifact": "lite.zip",
+    "url": "https://github.com/lavenderdotpet/LibreQuake/releases/download/v0.09-beta/lite.zip",
+    "sha256": "428e736b2f01d953e09a08c60bee975bdc4a0ac2219e97fa095c8af41754da83",
+    "edition": "Lite"
+  },
+  "files": {
+    "pak0.pak": "0dd895a425e75d9908025dcfe340f75f5b8166ada68b2d7ee54d8d91d29378ff",
+    "pak1.pak": "28423c01836341d9e3c6465b407a44ae94e4e29e954544a67739686850e39365"
+  }
+}

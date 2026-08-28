@@ -1,0 +1,59 @@
+diff --git a/apps/quake/vid_polkavm.c b/apps/quake/vid_polkavm.c
+index e08a5d1..c4fb0ab 100644
+--- a/apps/quake/vid_polkavm.c
++++ b/apps/quake/vid_polkavm.c
+@@ -219,6 +219,10 @@ qboolean SNDDMA_Init(void) {
+     return 1;
+ }
+ 
++void SNDDMA_Shutdown(void) {
++    shm = NULL;
++}
++
+ double Sys_FloatTime(void)
+ {
+     return s_timestamp;
+diff --git a/libs/musl/src/polkavm/polkavm.c b/libs/musl/src/polkavm/polkavm.c
+index 281b845..8b1f604 100644
+--- a/libs/musl/src/polkavm/polkavm.c
++++ b/libs/musl/src/polkavm/polkavm.c
+@@ -16,7 +16,7 @@ static struct pthread tls = {
+     .self = &tls,
+     .prev = &tls,
+     .next = &tls,
+-    .dtv = &dtv,
++    .dtv = dtv,
+ };
+ 
+ uintptr_t __get_tp() {
+diff --git a/setup.sh b/setup.sh
+index 4da2a15..b53c32d 100755
+--- a/setup.sh
++++ b/setup.sh
+@@ -29,7 +29,7 @@ cleanup() {
+ }
+ 
+ polkatool_install() {
+-	cargo install --quiet --root "$sysroot" polkatool
++	cargo install --quiet --locked --version 0.36.0 --root "$sysroot" polkatool
+ }
+ 
+ picoalloc_build() {
+@@ -221,7 +221,7 @@ main() {
+ 		run_single "$1"
+ 		exit 0
+ 	fi
+-	for suffix in polkavm corevm; do
++	for suffix in polkavm; do
+ 		sysroot="$root"/sysroot-"$suffix"
+ 		sysroot_init
+ 		polkatool_install
+@@ -231,8 +231,6 @@ main() {
+ 		esac
+ 		musl_build
+ 		musl_install
+-		linux_install
+-		libunwind_install
+ 	done
+ 	cat <<'EOF'
+ 

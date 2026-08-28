@@ -1,0 +1,22 @@
+{
+  "engine": {
+    "name": "PolkaPorts Quake",
+    "repository": "https://github.com/paritytech/polkaports",
+    "commit": "5d7b30ee88ced16491110c79118423ab3913efb0",
+    "sourcePath": "apps/quake",
+    "archive": "https://codeload.github.com/paritytech/polkaports/tar.gz/5d7b30ee88ced16491110c79118423ab3913efb0",
+    "archiveSha256": "f669242e42218adf6dbcb2cc42a5bbb26a518d1ff2964e28851aaa13c811c753",
+    "license": "GPL-2.0-or-later"
+  },
+  "build": {
+    "patch": "polkaports.patch",
+    "clang": "22.1.8",
+    "lld": {
+      "version": "22.1.8-1",
+      "archive": "https://archive.archlinux.org/packages/l/lld/lld-22.1.8-1-x86_64.pkg.tar.zst",
+      "sha256": "3032282365f09110922c8df0ef6afc56be2427b9396044334e22dced1aadc31c"
+    },
+    "polkatool": "0.36.0"
+  },
+  "content": "../../content/librequake/SOURCES.json"
+}

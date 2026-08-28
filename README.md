@@ -1,108 +1,118 @@
-# epoca-games
+# Product Runtime Examples
 
-Game ports and interactive demos running on [PolkaVM](https://github.com/nickvdp/polkavm) inside the [Epoca](https://github.com/replghost/epoca) workbench.
+Reproducible sample Products using the runtime-aware App manifest v2 contract from `paritytech/host-rust-core` PR #507.
 
-Each game is a sandboxed guest program that renders via the framebuffer API — the host presents pixel buffers and routes keyboard/mouse input.
+The repository is host-neutral. Artifacts are packaged once and are consumed unchanged by Epoca, Dotli, and other compatible Hosts. PolkaVM is the runtime; framebuffer, Tri2D, and WebGPU Raster are declared graphics profiles rather than executable kinds.
 
-## Games
+## Applications
 
-| Game | Source | License |
-|------|--------|---------|
-| `doom` | [doomgeneric](https://github.com/ozkl/doomgeneric) port | GPL-2.0 |
-| `duke3d` | [openfpgaOS Duke3D](https://github.com/openfpgaOS/Duke3D) port | GPL-2.0-or-later |
-| `nes` | [FCEUmm](https://github.com/libretro/libretro-fceumm) at `236ccdfc911e84c60fea6b9d0699c2d440a8de14` | GPL-2.0 |
-| `nes-controller-test` | Reproducible NROM validation cartridge | MIT |
+| App                 | Profile         | Source license   | Packaged content                                   |
+| ------------------- | --------------- | ---------------- | -------------------------------------------------- |
+| `doom`              | `framebuffer`   | GPL-2.0          | Freedoom Phase 1, BSD-3-Clause                     |
+| `quake`             | `framebuffer`   | GPL-2.0-or-later | LibreQuake Lite, BSD-3-Clause and GPL-2.0-or-later |
+| `duke3d`            | `framebuffer`   | GPL-2.0-or-later | Duke Nukem 3D v1.3d shareware                      |
+| `nes`               | `framebuffer`   | GPL-2.0          | Reproducible controller-test ROM, MIT              |
+| `egui-kitchen-sink` | `tri2d`         | MPL-2.0          | None                                               |
+| `gpu-cube`          | `webgpu-raster` | MPL-2.0          | None                                               |
+| `scene-lab`         | `webgpu-raster` | MPL-2.0          | Reproducible glTF-derived mesh                     |
 
-## Building
+A sample is included only when its executable source and every default asset are reproducible and legally redistributable. Retail Doom IWADs and Duke Nukem 3D GRP files are never committed. Quake uses the same PolkaPorts engine revision deployed at `epocaquake.paseo`, rebuilt from source and packaged with the pinned LibreQuake Lite release.
 
-The Doom product requires Rust `nightly-2025-05-10` with `rust-src`,
-`polkatool` 0.31, Python 3, and a Clang/LLVM toolchain with the RISC-V target.
-On macOS, `package.sh` uses Homebrew LLVM automatically; elsewhere set
-`PVM_CLANG` if the RISC-V-capable Clang is not on `PATH`:
+## Layout
 
-```bash
-./doom/package.sh
+```text
+apps/       App executables, manifests, icons, and per-app package commands
+content/    Reproducible redistributable game-data packages
+crates/     Shared no_std graphics and mesh crates used by sample Apps
+scripts/    Deterministic build, CAR creation, and byte-equality verification
+tests/      Source-level App manifest v2 contract tests
+dist/       Generated CARs and release identities; never committed
 ```
 
-This builds and links `app.polkavm`, then creates an engine-only
-`doom/doom.prod` containing `manifest.json` and `app.polkavm`. For a local
-development override, set `DOOM_IWAD` to a lawfully obtained IWAD. The
-override is mounted at the same `game/doom.wad` path used by Epoca's Content
-resolver, but is never required or included in the network deployment.
+Each app has one `manifest.json`. Its `bulletin-deploy.config.mjs` imports that object directly; it does not repeat `appVersion`, runtime, or capabilities. Artifact preparation serializes the object once and writes those exact bytes to `bundle/manifest.json`. The same bytes become the DotNS `executable` text record during publication.
 
-The Duke Nukem 3D product uses the same toolchain:
+## Prerequisites
 
-```bash
-./duke3d/package.sh
-```
-
-This creates an engine-only `duke3d/duke3d.prod`. Its default Content product
-is the original Duke Nukem 3D v1.3d shareware distribution. Stage a verified,
-byte-for-byte copy of the official archive for a separate Bulletin deployment
-with:
+- Node.js 22 or newer
+- Python 3
+- Rust `nightly-2025-05-10` and `nightly-2025-10-09`, both with `rust-src`
+- `polkatool` 0.31 for the Rust/C samples
+- Clang/LLVM with the RISC-V target for the C-based game ports; Quake bootstraps the pinned PolkaPorts `polkatool` 0.36 toolchain
 
 ```bash
-DUKE3D_SHAREWARE_ZIP=/absolute/path/to/3dduke13.zip ./duke3d/package.sh
+rustup toolchain install nightly-2025-05-10 nightly-2025-10-09 --component rust-src
+npm install
 ```
 
-The script requires the official archive SHA-256 and copies it unchanged to
-`duke3d/shareware/3dduke13.zip`. Epoca extracts `DUKE3D.GRP` from the nested
-archive locally, validates it, and mounts it read-only; the extracted GRP is
-never published. For a fully open local alternative, build the deterministic
-CC0 LibreSector GRP with `./libresector/package.sh` and pass its path through
-`DUKE3D_GRP` when running `duke3d/package.sh`.
+## Build
 
-Freedoom Phase 1 is packaged independently from its official 0.13.0 release:
+Build every app and produce deterministic CARs:
 
 ```bash
-FREEDOOM_ARCHIVE=/absolute/path/to/freedoom-0.13.0.zip ./freedoom/package.sh
+npm run build
+npm run verify
 ```
 
-Without `FREEDOOM_ARCHIVE`, the script downloads the official release. It
-verifies the release SHA-256, IWAD structure and item SHA-256 before creating
-`freedoom/bundle`.
-
-The NES engine and its default cartridge are packaged separately:
+Build a subset:
 
 ```bash
-./nes/package.sh
-./nes-controller-test/package.sh
+APP=doom,egui-kitchen-sink npm run build
 ```
 
-`nes/nes.prod` contains only the FCEUmm PolkaVM engine. The cartridge
-content product mounts at `game/cartridge.nes`; replacing it does not rebuild
-the engine. The default MIT-licensed test cartridge is built from
-`nes-controller-test/build_rom.py` and exercises both controllers, video,
-audio, and battery-backed RAM.
+Build the separately distributable Duke Nukem 3D v1.3d shareware content package:
 
-## Architecture
+```bash
+./content/duke3d-shareware/package.sh
+```
 
-Each game port follows the same pattern:
+That package downloads and verifies the original `3dduke13.zip`, then republishes the archive unchanged with its shareware license. The Duke application uses the shareware episode by default: its CAR retains the complete unchanged distribution and exposes a separately validated `DUKE3D.GRP` runtime view.
 
-1. Rust `no_std` shim (`src/main.rs`) — exports `init()` and `update()` via `polkavm_derive`
-2. C/Rust game or emulator code linked in via `build.rs`
-3. Host functions: framebuffer, PCM audio, input, immutable assets, logs, and save submission
-4. Experimental manifests declare the PolkaVM runtime, framebuffer ABI, General Input handlers, and immutable Content slots
+Generated release metadata under `dist/<app>.release.json` records the CID, App version, manifest SHA-256, and CAR SHA-256.
 
-## License
+## Verification contracts
 
-The DOOM port source is derived from
-[doomgeneric](https://github.com/ozkl/doomgeneric) and remains licensed under
-GPL-2.0; see `doom/LICENSE`. The Duke Nukem 3D port is derived from
-[openfpgaOS Duke3D](https://github.com/openfpgaOS/Duke3D) and remains licensed
-under GPL-2.0-or-later; see `duke3d/LICENSE`.
+`npm test` enforces source-level invariants:
 
-Freedoom content is distributed separately under BSD-3-Clause with its
-copyright notice, license conditions, warranty disclaimer, and contributor
-credits preserved in the generated package. Commercial Doom IWADs are not
-distributed and may only be supplied by the user as a local Content override.
-The original geometry, textures, palette, HUD graphics, and compatibility data
-generated by `libresector/generate.py` are dedicated to the public domain under
-CC0-1.0; see `libresector/LICENSE`. Commercial Duke Nukem 3D game data is not
-distributed and may only be supplied by the user as a local Content override.
-The original Duke Nukem 3D v1.3d shareware ZIP may be staged only as the exact,
-unmodified distribution; its included `LICENSE.TXT` governs redistribution.
+- `$v: 2`, `kind: "app"`, and explicit PolkaVM ABI 1
+- exactly one supported graphics profile
+- no legacy `$schema`, `modalities`, or `contentSlots`
+- deployment config imports the manifest as its only executable version source
+- retail game data is not a committed dependency
 
-The NES engine vendors FCEUmm under GPL-2.0 at the exact revision recorded in
-`nes/vendor/fceumm/EPOCA_VENDOR_REVISION`. The default validation cartridge is
-MIT licensed and ships with its complete reproducible source.
+`npm run verify` reopens every generated CAR and enforces:
+
+- one CAR root
+- safe UnixFS paths
+- embedded `manifest.json` byte equality with the external executable record
+- executable presence
+- release digest freshness
+- required asset licenses and attribution
+- Host compatibility expectations
+
+All seven samples launch in Dotli: Doom, Quake, Duke shareware, and NES use framebuffer; egui uses Tri2D; GPU cube and SceneLab use WebGPU Raster. NES remains the one observed Epoca boundary because its current native compiler traps during initialization.
+
+Run the native Epoca process-host smoke matrix against every supported profile:
+
+```bash
+EPOCA_PVM_HOST=/absolute/path/to/epoca-pvm-host npm run smoke:epoca
+```
+
+The smoke runner validates non-empty framebuffer output, a checked Tri2D stream, and a negotiated WebGPU Raster batch from the generated application binaries.
+
+Run the framebuffer artifacts through Dotli's browser-host integration:
+
+```bash
+DOTLI_REPO=/absolute/path/to/dotli npm run smoke:dotli
+```
+
+## Publishing
+
+Publishing is manual. Build and verify first, then use the app's `bulletin-deploy.config.mjs` with a Bulletin Deploy release that supports App manifest v2. CI does not hold deployment credentials or mutate DotNS.
+
+The verified Paseo Next v2 deployments are `doom.paseo`, `quake.paseo`, `duke.paseo`, `nes.paseo`, `egui.paseo`, `gpu.paseo`, and `scene-lab.paseo`. Their storage CIDs and final transaction hashes are pinned in `deployments/paseo-next-v2.json`.
+
+DotNS keeps its `$v: 1` root discovery envelope for display metadata. Every `app.<name>.paseo` `executable` text record contains the exact strict `$v: 2`, `kind: "app"` manifest from this repository.
+
+## Licensing
+
+See `LICENSE`, each app or content directory, and the notices embedded into generated bundles. User-supplied retail data may be used for local testing through the documented environment overrides but must not be published by these sample workflows.

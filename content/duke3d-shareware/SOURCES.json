@@ -1,0 +1,21 @@
+{
+  "distribution": {
+    "publisher": "3D Realms Entertainment",
+    "name": "Duke Nukem 3D v1.3d Shareware",
+    "file": "3dduke13.zip",
+    "mirror": "https://archive.org/download/3dduke13/3dduke13.zip",
+    "archiveItem": "https://archive.org/details/3dduke13",
+    "sha256": "c67efd179022bc6d9bde54f404c707cbcbdc15423c20be72e277bc2bdddf3d0e",
+    "md5": "04e4ca70b8a2d59ed56c451c5c1d5d39",
+    "size": 5924374,
+    "license": "Duke Nukem 3D Shareware License"
+  },
+  "validation": {
+    "nestedArchive": "DN3DSW13.SHR",
+    "grp": {
+      "path": "DUKE3D.GRP",
+      "size": 11035779,
+      "sha256": "f943d0c2e2a0803a644a2107c81ea897dec87596d9dd1a6a432131ad6f5818d6"
+    }
+  }
+}
