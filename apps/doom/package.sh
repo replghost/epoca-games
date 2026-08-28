@@ -19,8 +19,10 @@ export PVM_CLANG
 LLVM_BIN="$(dirname "$(command -v "$PVM_CLANG")")"
 PVM_LLVM_AR="${PVM_LLVM_AR:-$LLVM_BIN/llvm-ar}"
 PVM_LLVM_RANLIB="${PVM_LLVM_RANLIB:-$LLVM_BIN/llvm-ranlib}"
+[[ -x "$PVM_LLVM_AR" ]] || PVM_LLVM_AR="$(command -v llvm-ar || true)"
+[[ -x "$PVM_LLVM_RANLIB" ]] || PVM_LLVM_RANLIB="$(command -v llvm-ranlib || true)"
 [[ -x "$PVM_LLVM_AR" && -x "$PVM_LLVM_RANLIB" ]] ||
-  fail "llvm-ar and llvm-ranlib are required beside PVM_CLANG"
+  fail "llvm-ar and llvm-ranlib are required beside PVM_CLANG or in PATH"
 export PVM_LLVM_AR PVM_LLVM_RANLIB
 
 if [[ -n "${DOOM_IWAD:-}" && (! -f "$DOOM_IWAD" || ! -r "$DOOM_IWAD") ]]; then
