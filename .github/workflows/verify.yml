@@ -24,6 +24,10 @@ jobs:
           components: rust-src
       - name: Install legacy game toolchain
         run: rustup toolchain install nightly-2025-05-10 --component rust-src
+      - name: Install native LLVM tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes clang llvm lld
       - name: Install PolkaVM linker
         run: cargo install polkatool --version 0.31.0 --locked
       - name: Install JavaScript dependencies
