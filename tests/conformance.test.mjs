@@ -27,8 +27,8 @@ test("the shared matrix covers every runtime profile and canonical app", async (
   );
   for (const app of apps) {
     const paths = conformanceAppPaths(app.id);
-    assert.ok((await stat(paths.bundle)).isDirectory(), `${app.id} bundle`);
-    assert.ok((await stat(paths.manifest)).isFile(), `${app.id} manifest`);
+    assert.ok((await stat(paths.app)).isDirectory(), `${app.id} source`);
+    assert.ok((await stat(paths.deployment)).isFile(), `${app.id} deployment`);
     assert.ok(app.inputKeys.length > 0, `${app.id} input contract`);
   }
 });

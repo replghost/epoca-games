@@ -31,6 +31,7 @@ export function conformanceAppPaths(id) {
   const app = resolve(root, "apps", id);
   return {
     app,
+    deployment: resolve(app, "bulletin-deploy.config.mjs"),
     bundle: resolve(app, "bundle"),
     car: resolve(root, "dist", `${id}.car`),
     manifest: resolve(app, "bundle", "manifest.json"),
