@@ -88,29 +88,11 @@ function validateManifest(value) {
   ) {
     throw new Error(`${appId}: unsupported graphics requirements`);
   }
-  const deviceInput = value.capabilities.deviceInput;
   validateCapability(
-    deviceInput,
-    new Set([
-      "pointer",
-      "relative-pointer",
-      "keyboard",
-      "touch",
-      "wheel",
-      "text",
-      "ime",
-      "focus",
-    ]),
+    value.capabilities.deviceInput,
+    new Set(["pointer", "keyboard", "touch", "wheel", "text", "ime", "focus"]),
     "deviceInput",
   );
-  if (
-    deviceInput?.requiredFeatures.includes("relative-pointer") &&
-    !deviceInput.requiredFeatures.includes("pointer")
-  ) {
-    throw new Error(
-      `${appId}: relative-pointer input requires pointer input`,
-    );
-  }
   validateCapability(value.capabilities.audio, new Set(), "audio");
 }
 
