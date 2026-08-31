@@ -14,6 +14,7 @@ const expected = {
   "gpu-cube": "webgpu-raster",
   "scene-lab": "webgpu-raster",
 };
+const relativePointerApps = new Set(["doom", "quake", "duke3d"]);
 
 for (const [app, profile] of Object.entries(expected)) {
   test(`${app} is a strict App manifest v2 PolkaVM product`, async () => {
@@ -37,6 +38,16 @@ for (const [app, profile] of Object.entries(expected)) {
     assert.equal(manifest.capabilities.graphics.abiVersion, 1);
     assert.equal(manifest.capabilities.graphics.profile, profile);
     assert.deepEqual(manifest.capabilities.graphics.requiredFeatures, []);
+    const deviceFeatures =
+      manifest.capabilities.deviceInput?.requiredFeatures ?? [];
+    assert.equal(
+      deviceFeatures.includes("relative-pointer"),
+      relativePointerApps.has(app),
+      `${app} relative pointer requirement`,
+    );
+    if (deviceFeatures.includes("relative-pointer")) {
+      assert.equal(deviceFeatures.includes("pointer"), true);
+    }
     assert.equal("modalities" in manifest, false);
     assert.equal("contentSlots" in manifest, false);
   });
