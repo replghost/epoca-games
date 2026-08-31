@@ -57,3 +57,14 @@ index 4da2a15..b53c32d 100755
  	done
  	cat <<'EOF'
  
+diff --git a/apps/quake/menu.c b/apps/quake/menu.c
+index a0130a8..b8782db 100644
+--- a/apps/quake/menu.c
++++ b/apps/quake/menu.c
+@@ -422,5 +422,5 @@ void M_StartNewGame (void)
+ 	key_dest = key_game;
+ 	if (sv.active)
+ 		Cbuf_AddText ("disconnect\n");
+-	Cbuf_AddText ("map e1m1\n");
++	Cbuf_AddText ("map start\n");
+ }

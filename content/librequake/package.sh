@@ -74,6 +74,7 @@ def validate_pak(name, data):
         raise SystemExit(f"LibreQuake {name} has a malformed directory")
     if directory_offset > len(data) or directory_size > len(data) - directory_offset:
         raise SystemExit(f"LibreQuake {name} directory is out of bounds")
+    entries = set()
     for offset in range(directory_offset, directory_offset + directory_size, 64):
         raw_name = data[offset : offset + 56].split(b"\0", 1)[0]
         try:
@@ -83,13 +84,22 @@ def validate_pak(name, data):
         parts = path.split("/")
         if not path or path.startswith("/") or "\\" in path or any(part in ("", ".", "..") for part in parts):
             raise SystemExit(f"LibreQuake {name} contains an unsafe path: {path!r}")
+        entries.add(path)
         file_offset, file_size = struct.unpack_from("<II", data, offset + 56)
         if file_offset > len(data) or file_size > len(data) - file_offset:
             raise SystemExit(f"LibreQuake {name} entry is out of bounds: {path}")
+    return entries
 
 
-for pak_name in pak_sha256:
-    validate_pak(pak_name, extracted[pak_name])
+pak_entries = {
+    pak_name: validate_pak(pak_name, extracted[pak_name]) for pak_name in pak_sha256
+}
+required_start_maps = {"maps/start.bsp", "maps/lq_e0m1.bsp"}
+missing_start_maps = required_start_maps - pak_entries["pak0.pak"]
+if missing_start_maps:
+    raise SystemExit(
+        f"LibreQuake pak0.pak is missing campaign start maps: {sorted(missing_start_maps)}"
+    )
 
 with open(manifest_path, "rb") as handle:
     manifest_bytes = handle.read()

@@ -62,9 +62,15 @@ test("default game data comes from redistributable content packages", async () =
   const doom = await readFile(resolve(root, "apps/doom/package.sh"), "utf8");
   const duke = await readFile(resolve(root, "apps/duke3d/package.sh"), "utf8");
   const quake = await readFile(resolve(root, "apps/quake/package.sh"), "utf8");
+  const quakePatch = await readFile(
+    resolve(root, "apps/quake/polkaports.patch"),
+    "utf8",
+  );
   assert.match(doom, /content\/freedoom\/package\.sh/);
   assert.match(duke, /content\/duke3d-shareware\/package\.sh/);
   assert.match(quake, /content\/librequake\/package\.sh/);
+  assert.match(quakePatch, /^\+.*map start\\n/m);
+  assert.match(quakePatch, /^-.*map e1m1\\n/m);
   assert.doesNotMatch(doom, /\bdoom1\.wad\b/);
   assert.doesNotMatch(duke, /content\/libresector\/package\.sh/);
   assert.doesNotMatch(quake, /\bid1\/pak[01]\.pak\b/);

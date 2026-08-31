@@ -76,7 +76,7 @@ if actual_sha256 != expected_sha256:
         f"PolkaPorts archive SHA-256 mismatch: expected {expected_sha256}, got {actual_sha256}"
     )
 
-marker = os.path.join(source_dir, ".epoca-patched")
+marker = os.path.join(source_dir, ".epoca-patched-lq-start")
 if not os.path.exists(marker):
     shutil.rmtree(source_dir, ignore_errors=True)
     parent = os.path.dirname(source_dir)
@@ -94,13 +94,13 @@ if not os.path.exists(marker):
         shutil.rmtree(staging, ignore_errors=True)
 PY
 
-if [[ ! -f "$SOURCE_DIR/.epoca-patched" ]]; then
+if [[ ! -f "$SOURCE_DIR/.epoca-patched-lq-start" ]]; then
   (
     cd "$SOURCE_DIR"
     patch --dry-run --silent -p1 -i "$QUAKE_DIR/polkaports.patch"
     patch --silent -p1 -i "$QUAKE_DIR/polkaports.patch"
   )
-  touch "$SOURCE_DIR/.epoca-patched"
+  touch "$SOURCE_DIR/.epoca-patched-lq-start"
 fi
 
 if [[ ! -f "$SOURCE_DIR/sysroot-polkavm/.epoca-ready" ]]; then
