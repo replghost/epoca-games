@@ -10,7 +10,6 @@ export default {
     {
       kind: "app",
       path: "./bundle",
-      appVersion: manifest.appVersion,
       manifest,
     },
   ],

@@ -6,5 +6,5 @@ export default {
   description:
     "A sandboxed PolkaVM Duke3D port packaged with the original v1.3d shareware episode.",
   icon: { path: "./icon.png", format: "png" },
-  executables: [{ kind: "app", path: "./bundle", appVersion: manifest.appVersion, manifest }],
+  executables: [{ kind: "app", path: "./bundle", manifest }],
 };

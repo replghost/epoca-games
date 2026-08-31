@@ -5,5 +5,5 @@ export default {
   displayName: "Scene Lab",
   description: "A PolkaVM WebGPU Raster scene with an egui control surface.",
   icon: { path: "./icon.png", format: "png" },
-  executables: [{ kind: "app", path: "./bundle", appVersion: manifest.appVersion, manifest }],
+  executables: [{ kind: "app", path: "./bundle", manifest }],
 };
