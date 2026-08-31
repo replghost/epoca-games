@@ -1,7 +1,7 @@
 {
   "environment": "paseo-next-v2",
   "deployedAt": "2026-08-27T00:32:15Z",
-  "lastUpdatedAt": "2026-08-27T02:36:04Z",
+  "lastUpdatedAt": "2026-08-31T11:12:37Z",
   "owner": {
     "ss58": "5HEmUSABdWGLfqkcURxmR5wZ6Qc777x4oYoqFvXTJUkLuZzG",
     "h160": "0xfd840f56c2cbdd4a7446a38d67fe09fddd36544d"
@@ -26,11 +26,11 @@
     {
       "app": "quake",
       "domain": "quake.paseo",
-      "appVersion": [0, 2, 0],
-      "localCarRoot": "bafybeiha4jr222i4g562irhgrfznxtesmv63jpjgwcourv2lgcj5y6v2sm",
-      "storageCid": "bafybeidl24stfy5kznpu63kqrvl5rcw5owbmq3gbzptc7663fotj5ezhsu",
-      "contenthashTx": "0x8b326ea33c9e1c2b1b050dc94734b07e26baff99f2475fc1bf790e85407a7a17",
-      "executableRecordTx": "0xfc102566e0d94c96344052ef8b5051951d8802c5b388643569528be75fc83231"
+      "appVersion": [0, 2, 1],
+      "localCarRoot": "bafybeickn5xnix3y7vlcxcdz3lfqi3xudisw7n7bbgokdqmknsqoumhu3i",
+      "storageCid": "bafybeiglxvcpfi7xpummtwfey7nxdmzvoy3y7stdtn4rgbmnp3lm3hniwi",
+      "contenthashTx": "0xff79bf74dd3abe8e31245625a35ad16b2452fad7c5482ebb152455a9767951cc",
+      "executableRecordTx": "0x3de82bd9124e372365c41b38a9a666e4c31a4d604f98e3fa1d0f0a49d0e0a3f0"
     },
     {
       "app": "duke3d",
