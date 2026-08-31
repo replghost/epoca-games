@@ -14,7 +14,7 @@
     {
       "id": "duke3d",
       "profile": "framebuffer",
-      "inputKeys": ["Enter"]
+      "inputKeys": []
     },
     {
       "id": "nes",
